@@ -1,0 +1,14 @@
+# Keep the build context small and hermetic. The venv and node_modules are
+# host-specific — a Linux image must not inherit Windows binaries — and dist/
+# is rebuilt in the image rather than copied from whatever was last built here.
+**/.venv/
+**/node_modules/
+**/__pycache__/
+**/*.py[cod]
+frontend/dist/
+.git/
+.claude/
+*.db
+*.sqlite3
+*.docx
+*.stackdump

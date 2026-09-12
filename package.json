@@ -1,0 +1,13 @@
+{
+  "name": "algae-carbon-platform",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Algae-Based Carbon Sequestration Monitoring Platform — HackOut'26, team Pixel Error.",
+  "scripts": {
+    "dev": "node scripts/dev.js",
+    "dev:api": "node -e \"process.chdir('backend');require('child_process').spawnSync(process.platform==='win32'?'.venv/Scripts/python.exe':'.venv/bin/python',['-m','uvicorn','app:app','--reload','--port','8000'],{stdio:'inherit'})\"",
+    "dev:web": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build"
+  }
+}

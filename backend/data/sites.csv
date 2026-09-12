@@ -1,0 +1,3 @@
+site_id,name,operator,species,pond_type,pond_area_m2,facility_acres,commissioning_date,location,aoi_lat,aoi_lon
+site-a,Site A -- Earthrise Raceway Block,Earthrise Nutritionals,Spirulina platensis,open raceway,181000,108,2024-04-01,"Calipatria, Imperial Valley, California, USA",33.16558,-115.5122
+site-b,Site B -- Cyanotech Keahole Ponds,Cyanotech Corporation,Haematococcus pluvialis,open raceway,90000,96,2024-06-15,"Keahole Point, Kailua-Kona, Hawaii, USA",19.72935,-156.05526

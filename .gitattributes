@@ -1,0 +1,9 @@
+# Normalise line endings. Git checks these out as CRLF on Windows by default,
+# and a CRLF Dockerfile or shell script breaks inside a Linux container with an
+# error that points nowhere useful. The whole team is on Windows, so pin the
+# files the build actually executes.
+* text=auto
+Dockerfile text eol=lf
+*.sh text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf

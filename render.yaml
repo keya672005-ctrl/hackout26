@@ -1,0 +1,15 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# Import this from the repo (New > Blueprint) rather than clicking a service
+# together by hand, so the deploy is reproducible and reviewable in the diff.
+services:
+  - type: web
+    name: algae-carbon-platform
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    region: singapore
+    # Not `/`: if the frontend build were missing, `/` would still answer and
+    # the service would look healthy while showing nothing.
+    healthCheckPath: /health
+    autoDeployTrigger: commit
