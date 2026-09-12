@@ -8,6 +8,8 @@
     "dev": "node scripts/dev.js",
     "dev:api": "node -e \"process.chdir('backend');require('child_process').spawnSync(process.platform==='win32'?'.venv/Scripts/python.exe':'.venv/bin/python',['-m','uvicorn','app:app','--reload','--port','8000'],{stdio:'inherit'})\"",
     "dev:web": "npm --prefix frontend run dev",
-    "build": "npm --prefix frontend run build"
+    "build": "npm --prefix frontend run build",
+    "demo": "node scripts/demo.js",
+    "demo:check": "node scripts/demo.js --check"
   }
 }

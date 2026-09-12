@@ -1,0 +1,88 @@
+# Demo card — HackOut'26, team Pixel Error
+
+Print this. Anyone on the team should be able to drive the demo off this page
+without asking anyone else what to click.
+
+---
+
+## Which link do I demo?
+
+**Primary — the deployed service:** https://algae-carbon-platform.onrender.com
+
+**Fallback — this laptop, no internet needed:**
+
+```
+npm run demo
+```
+
+One command, from the project root. It builds if the build is stale, serves the
+API and the dashboard from one local port, checks the demo is intact, prints the
+URL and opens the browser. Ctrl+C stops it.
+
+### Use the fallback when
+
+- the venue wifi is down, captive-portalled, or crawling
+- the Render link is still spinning after ~60 seconds (the free instance sleeps
+  after 15 minutes idle and cold-starts slowly)
+- anything on the deployed page looks wrong and you have 20 seconds to decide
+
+You do not need to explain the switch. "We run this locally too — it has no
+cloud dependency" is a feature of the architecture, so say that instead.
+
+---
+
+## Before you go up — 2 minutes
+
+1. `npm run demo:check` — runs every check and exits. All green means this
+   machine can carry the demo alone.
+2. Open the Render link and leave the tab open, so the instance is warm.
+3. Have `npm run demo` already running in a terminal, browser tab open on the
+   overview. Switching tabs is instant; starting a server while judges watch is
+   not.
+4. Close Docker Desktop and spare VS Code windows. This machine has 7.7 GB and
+   the demo is the only thing that matters for the next ten minutes.
+
+---
+
+## The run — five beats
+
+| # | Do | Say |
+|---|---|---|
+| 1 | Overview screen | Two cultivation sites. One verified, one flagged — and the platform decided that, not the operator. |
+| 2 | Click the **verified** site | Sensor-reported biomass against an independent Sentinel-2 chlorophyll index, both indexed to 100. They move together. |
+| 3 | Point at the verification panel | Peak divergence 11.5% against a 15% tolerance. RULE-001 found no sustained disagreement, so the figure is publishable. |
+| 4 | Back, open the **flagged** site | Same two lines, coming apart. The sensor record claims growth the imagery does not support, so we do not publish the number — we flag it. |
+| 5 | Verified site → **report** → Print / Save as PDF | This is the artifact an investor or verifier receives. The report id is a fingerprint of the figures in it: change any published number and the id changes. |
+
+**Closing line:** *We don't just show sensor numbers — we prove them.*
+
+---
+
+## If something breaks
+
+| What you see | Do this |
+|---|---|
+| Render link hangs > 60s | Switch to the local tab. Do not reload and wait. |
+| Local page is blank | `Ctrl+C`, then `npm run demo` again — it rebuilds on start. |
+| "port is busy" in the output | Nothing to do, it takes the next port and prints the URL it actually used. |
+| A chart is empty | Check the reporting window filter is on **6 weeks**. |
+| Print dialog won't open | The report page still shows every figure on screen — read them off it. |
+| Laptop dies entirely | The deployed link works from any phone, including on mobile data. |
+
+---
+
+## What to say if a judge asks what's real
+
+Be straight about this — it is a stronger answer than hedging.
+
+- **Real:** the Sentinel-2 imagery indices (Copernicus, cached before the demo),
+  the CO2 conversion constant (1.8321 kg CO2 per kg dry biomass, from published
+  microalgae biofixation work), the two sites, the reconciliation logic, and
+  every figure on screen, which is computed by the backend and never in the
+  browser.
+- **Simulated:** the sensor stream — a logistic growth curve with a diurnal
+  cycle and noise, standing in for pond hardware we do not have.
+- **Out of scope, deliberately:** auth, multi-tenancy, a live credit registry,
+  and permanence. We report carbon as *fixed*, not as permanently sequestered,
+  because what happens to harvested biomass is outside what this platform can
+  see.
