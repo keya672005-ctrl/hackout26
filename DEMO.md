@@ -44,15 +44,16 @@ cloud dependency" is a feature of the architecture, so say that instead.
 
 ---
 
-## The run — five beats
+## The run — six beats
 
 | # | Do | Say |
 |---|---|---|
-| 1 | Overview screen | Two cultivation sites. One verified, one flagged — and the platform decided that, not the operator. |
-| 2 | Click the **verified** site | Sensor-reported biomass against an independent Sentinel-2 chlorophyll index, both indexed to 100. They move together. |
-| 3 | Point at the verification panel | Peak divergence 11.5% against a 15% tolerance. RULE-001 found no sustained disagreement, so the figure is publishable. |
-| 4 | Back, open the **flagged** site | Same two lines, coming apart. The sensor record claims growth the imagery does not support, so we do not publish the number — we flag it. |
-| 5 | Verified site → **report** → Print / Save as PDF | This is the artifact an investor or verifier receives. The report id is a fingerprint of the figures in it: change any published number and the id changes. |
+| 1 | Overview screen | Six raceway blocks across two real facilities — Earthrise in California, Cyanotech in Hawaii. Each one is measured separately, because a facility does not fail verification, a pond does. |
+| 2 | **Facility** dropdown → Earthrise | All three Earthrise blocks reconcile against the satellite record. |
+| 3 | Dropdown → Cyanotech | All three Cyanotech blocks are flagged. The platform is not asserting fraud — it is saying these claims are not supported by the imagery, and should not be published as credits until someone looks. |
+| 4 | Back to **All facilities**, open a verified block | Sensor-reported biomass against an independent Sentinel-2 chlorophyll index, both indexed to 100. They move together. |
+| 5 | Verification panel | Peak divergence against a 15% tolerance. RULE-001 found no sustained disagreement, so the figure is publishable. |
+| 6 | Open a flagged block → then a verified block's **report** → Print / Save as PDF | Same two lines, coming apart. And this is the artifact a verifier receives for one that passed — the report id is a fingerprint of the figures in it: change any published number and the id changes. |
 
 **Closing line:** *We don't just show sensor numbers — we prove them.*
 
@@ -77,9 +78,17 @@ Be straight about this — it is a stronger answer than hedging.
 
 - **Real:** the Sentinel-2 imagery indices (Copernicus, cached before the demo),
   the CO2 conversion constant (1.8321 kg CO2 per kg dry biomass, from published
-  microalgae biofixation work), the two sites, the reconciliation logic, and
-  every figure on screen, which is computed by the backend and never in the
-  browser.
+  microalgae biofixation work), both facilities, the **pond blocks themselves**
+  — each was delineated from the imagery by clustering pixels that hold
+  chlorophyll across every date, which is why the rectangles line up with the
+  raceway channels — the reconciliation logic, and every figure on screen,
+  which is computed by the backend and never in the browser.
+- **Worth saying out loud if Cyanotech comes up:** all three of its blocks are
+  flagged. That is what this dataset produces, not a claim about the company —
+  the sensor stream is simulated, and its blocks have sparser cloud-free
+  imagery (6 usable dates against Earthrise's 9), so the comparison has less to
+  go on. A verifier reading "needs review" is being told to look, not told
+  someone lied.
 - **Simulated:** the sensor stream — a logistic growth curve with a diurnal
   cycle and noise, standing in for pond hardware we do not have.
 - **Out of scope, deliberately:** auth, multi-tenancy, a live credit registry,

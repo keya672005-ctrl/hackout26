@@ -10,8 +10,9 @@
  *
  * It refuses to start quietly. Everything that could be wrong on stage is
  * checked *before* the browser opens: the build exists and is current, the
- * port is genuinely free, the API answers with the two sites the script talks
- * about, and nothing on the page reaches for a URL that needs a network. A
+ * port is genuinely free, the API answers with the blocks the script talks
+ * about and with both verdicts on screen, and nothing on the page reaches for a
+ * URL that needs a network. A
  * fallback that fails the same way the primary does is not a fallback.
  *
  *   npm run demo          build if needed, serve, open the browser
@@ -198,14 +199,16 @@ check('the API is answering', true, `${base}/health`)
 console.log(bold('\n3. The demo itself'))
 
 const sites = await (await waitFor(`${base}/api/sites`)).json()
-check('both sites are reporting', sites.length >= 2, sites.map((s) => s.site_id).join(', '))
+check('every block is reporting', sites.length >= 2, `${sites.length}: ` + sites.map((s) => s.site_id).join(', '))
 
-// The pitch turns on one site passing and one failing. If the seed ever drifts
-// to two verdicts the same, the story has no contrast and it is better to find
-// that out here than mid-sentence.
+// The pitch turns on some blocks passing and some failing. If the seed ever
+// drifts to one verdict across the board, the story has no contrast and it is
+// better to find that out here than mid-sentence.
 const verdicts = new Set(sites.map((s) => s.status))
-check('one site verifies and one needs review', verdicts.has('verified') && verdicts.has('needs_review'),
-  sites.map((s) => `${s.site_id}=${s.status}`).join(' '))
+check('at least one block verifies and one needs review',
+  verdicts.has('verified') && verdicts.has('needs_review'),
+  `${sites.filter((s) => s.status === 'verified').length} verified, `
+  + `${sites.filter((s) => s.status !== 'verified').length} flagged`)
 
 const verified = sites.find((s) => s.status === 'verified')
 if (verified) {
@@ -235,11 +238,12 @@ if (CHECK_ONLY) {
 console.log('')
 console.log(bold(`  ${base}/`))
 console.log('')
-console.log(dim('  1. Overview — two sites, one verified, one flagged'))
-console.log(dim('  2. Open the verified site — sensor line vs. satellite line'))
-console.log(dim('  3. Verification panel — divergence against the 15% tolerance'))
-console.log(dim('  4. Open the flagged site — same chart, the lines come apart'))
-console.log(dim('  5. Back to the verified site → report → Print / Save as PDF'))
+console.log(dim('  1. Overview — six blocks across two facilities'))
+console.log(dim('  2. Facility dropdown — Earthrise verifies, Cyanotech is flagged'))
+console.log(dim('  3. Open a verified block — sensor line vs. satellite line'))
+console.log(dim('  4. Verification panel — divergence against the 15% tolerance'))
+console.log(dim('  5. Open a flagged block — same chart, the lines come apart'))
+console.log(dim('  6. Back to a verified block → report → Print / Save as PDF'))
 console.log('')
 console.log(dim('  Ctrl+C to stop. This needs no internet — say so while demoing it.'))
 console.log('')

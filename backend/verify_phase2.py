@@ -81,7 +81,11 @@ check(abs(engine_total - expected_total) <= 0.5 and CO2_PER_KG_BIOMASS > 0,
 
 # --- 2. endpoint returns correct values for all seeded demo sites -----------
 CONTRACT = {                                    # architecture.md 3, exactly
-    "summary": {"site_id", "name", "species", "co2_sequestered_kg", "status", "trend"},
+    # operator/location were added to the summary when the two facilities were
+    # subdivided into six blocks -- the overview groups and filters by facility,
+    # and a second round-trip per card to learn whose pond it is would be silly.
+    "summary": {"site_id", "name", "species", "operator", "location",
+                "co2_sequestered_kg", "status", "trend"},
     "detail": {"site_id", "name", "species", "pond_type", "pond_area_m2",
                "commissioning_date", "status"},
     "reading": {"date", "biomass_density_g_L", "co2_uptake_cum_kg", "water_temp_C",

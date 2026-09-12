@@ -22,7 +22,7 @@ algae-carbon-platform/
 ├── frontend/
 │   ├── src/
 │   │   ├── pages/         # SiteOverview, SiteDetail, Report
-│   │   ├── components/    # charts, status badges, stat tiles
+│   │   ├── components/    # charts, status badges, stat tiles, filters
 │   │   └── api/            # fetch client
 │   └── .npmrc             # Phase 6 — pins the public npm registry, so the
 │                          #   lockfile stays portable off this machine
@@ -61,6 +61,8 @@ List view for the Site Overview screen.
     "site_id": "site-a",
     "name": "Site A — Raceway 1",
     "species": "Chlorella vulgaris",
+    "operator": "Earthrise Nutritionals",          // groups the overview
+    "location": "Calipatria, California, USA",     // shown in the facility picker
     "co2_sequestered_kg": 1920,
     "status": "verified",           // "verified" | "needs_review"
     "trend": [12, 14, 18, 22, 27, 31]   // sparkline points

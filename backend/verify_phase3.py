@@ -414,8 +414,11 @@ finally:
     shutil.rmtree(tmp, ignore_errors=True)
 
 # Phase 2 must still be intact -- Phase 3 rewrote the status field it serves.
-check(abs(co2.total_co2_kg("site-a") - 142185.39) < 0.01
-      and abs(co2.total_co2_kg("site-b") - 32205.31) < 0.01,
+# Re-pinned when the two facility-wide footprints were subdivided into the six
+# measured raceway blocks: the figures fell because each site is now one block
+# rather than a whole facility, not because the engine changed.
+check(abs(co2.total_co2_kg("site-a") - 45624.01) < 0.01
+      and abs(co2.total_co2_kg("site-b") - 15769.97) < 0.01,
       "Phase 2 CO2 figures are unchanged by the Phase 3 wiring",
       f"site-a {co2.total_co2_kg('site-a'):,.2f} kg, "
       f"site-b {co2.total_co2_kg('site-b'):,.2f} kg")

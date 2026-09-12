@@ -9,9 +9,10 @@ const RANGES = [
  * control. Ranges anchor on the last reading rather than today's date, so the
  * window is stable whenever the demo runs.
  */
-export default function RangeFilter({ value, onChange }) {
+export default function RangeFilter({ value, onChange, inline }) {
+  const Row = inline ? 'span' : 'div'
   return (
-    <div className="filter-row">
+    <Row className={inline ? 'filter-group' : 'filter-row'}>
       <span className="filter-label" id="range-label">
         Reporting window
       </span>
@@ -27,6 +28,6 @@ export default function RangeFilter({ value, onChange }) {
           </button>
         ))}
       </div>
-    </div>
+    </Row>
   )
 }

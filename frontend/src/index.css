@@ -452,6 +452,14 @@ thead th {
   margin-top: 4px;
 }
 
+.site-operator {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 .site-figure {
   margin-top: 26px;
   padding-top: 18px;
@@ -499,6 +507,35 @@ thead th {
 .filter-label {
   font-size: 10.5px;
   color: var(--text-muted);
+}
+
+/* Two controls share the filter row, so each brings a group rather than a row
+   of its own. */
+.filter-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.select {
+  font: inherit;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  cursor: pointer;
+  max-width: 100%;
+  /* The long option label sets the natural width of a <select>; cap it so the
+     control does not eat the whole row on a wide screen. */
+  width: min(340px, 100%);
+  transition: border-color var(--ease);
+}
+
+.select:hover {
+  border-color: var(--teal-600);
 }
 
 .segmented {

@@ -205,7 +205,7 @@ async function main() {
   heading('4. The full journey works by clicking, not by typing URLs (item 1)')
 
   const { page, cleanup } = await openBrowser()
-  const siteA = sites[0]
+  const siteA = sites.find((s) => s.status === 'verified') ?? sites[0]
 
   await page.goto(`${base}/#/`, `() => document.querySelectorAll('.site-card').length > 0`,
     'site cards')

@@ -69,6 +69,8 @@ def list_sites(range: str | None = Query(None, description="e.g. '6w', '30d', 'a
             site_id=row.site_id,
             name=row.name,
             species=row.species,
+            operator=row.operator,
+            location=row.location,
             co2_sequestered_kg=co2.total_co2_kg(row.site_id, days),
             status=reconcile.status_for(row.site_id, days),
             trend=co2.co2_trend(row.site_id, TREND_POINTS, days),

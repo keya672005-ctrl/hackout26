@@ -52,7 +52,12 @@ async function main() {
   const { base, api } = await boot()
 
   const sites = await api('/api/sites?range=6w')
-  const [siteA, siteB] = sites
+  // A verified site and a flagged one, chosen by verdict rather than by
+  // position. With six blocks in the list, sites[0] and sites[1] can easily be
+  // two of the same verdict -- and the whole point of switching between them
+  // here is to prove the screen re-renders a *different* verdict.
+  const siteA = sites.find((s) => s.status === 'verified') ?? sites[0]
+  const siteB = sites.find((s) => s.status !== siteA.status) ?? sites[1]
 
   // --- 2. the contract ----------------------------------------------------
   heading('2. /report matches the architecture.md §3 contract')

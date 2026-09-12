@@ -1,3 +1,7 @@
 site_id,name,operator,species,pond_type,pond_area_m2,facility_acres,commissioning_date,location,aoi_lat,aoi_lon
-site-a,Site A -- Earthrise Raceway Block,Earthrise Nutritionals,Spirulina platensis,open raceway,181000,108,2024-04-01,"Calipatria, Imperial Valley, California, USA",33.16558,-115.5122
-site-b,Site B -- Cyanotech Keahole Ponds,Cyanotech Corporation,Haematococcus pluvialis,open raceway,90000,96,2024-06-15,"Keahole Point, Kailua-Kona, Hawaii, USA",19.72935,-156.05526
+site-a,Earthrise Block A,Earthrise Nutritionals,Spirulina platensis,open raceway,58000,108,2024-04-01,"Calipatria, Imperial Valley, California, USA",33.16315,-115.51116
+site-c,Earthrise Block B,Earthrise Nutritionals,Spirulina platensis,open raceway,49000,108,2024-04-01,"Calipatria, Imperial Valley, California, USA",33.16513,-115.51137
+site-d,Earthrise Block C,Earthrise Nutritionals,Spirulina platensis,open raceway,48000,108,2024-04-01,"Calipatria, Imperial Valley, California, USA",33.16827,-115.51272
+site-b,Cyanotech Block A,Cyanotech Corporation,Haematococcus pluvialis,open raceway,44000,96,2024-06-15,"Keahole Point, Kailua-Kona, Hawaii, USA",19.73007,-156.05516
+site-e,Cyanotech Block B,Cyanotech Corporation,Haematococcus pluvialis,open raceway,35000,96,2024-06-15,"Keahole Point, Kailua-Kona, Hawaii, USA",19.72845,-156.05373
+site-f,Cyanotech Block C,Cyanotech Corporation,Haematococcus pluvialis,open raceway,18000,96,2024-06-15,"Keahole Point, Kailua-Kona, Hawaii, USA",19.73061,-156.05688

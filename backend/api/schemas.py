@@ -24,6 +24,11 @@ class SiteSummary(BaseModel):
     site_id: str
     name: str
     species: str
+    # Operator and location travel with the summary so the overview can group
+    # and filter by facility without a second round-trip. Six blocks across two
+    # facilities is already more than a reader wants as one flat list.
+    operator: str
+    location: str
     co2_sequestered_kg: float
     status: SiteStatus
     trend: list[float] = Field(description="Cumulative-CO2 sparkline points.")

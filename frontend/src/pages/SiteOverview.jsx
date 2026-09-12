@@ -1,6 +1,7 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { listSites } from '../api/client'
 import { useApi } from '../hooks/useApi'
+import FacilityFilter from '../components/FacilityFilter'
 import RangeFilter from '../components/RangeFilter'
 import Sparkline from '../components/Sparkline'
 import StatusBadge from '../components/StatusBadge'
@@ -13,6 +14,7 @@ function SiteCard({ site }) {
         <div>
           <div className="site-name">{site.name}</div>
           <div className="site-species">{site.species}</div>
+          <div className="site-operator">{site.operator}</div>
         </div>
         <StatusBadge status={site.status} />
       </div>
@@ -36,6 +38,11 @@ export default function SiteOverview({ range, onRangeChange }) {
     [range],
   )
 
+  // Facility scope is local to this screen: it narrows which blocks are listed,
+  // and there is nothing to narrow once the reader is inside one of them.
+  const [facility, setFacility] = useState('all')
+  const shown = data ? data.filter((s) => facility === 'all' || s.operator === facility) : []
+
   return (
     <div className="page">
       <div className="page-head">
@@ -48,7 +55,10 @@ export default function SiteOverview({ range, onRangeChange }) {
         </p>
       </div>
 
-      <RangeFilter value={range} onChange={onRangeChange} />
+      <div className="filter-row">
+        <RangeFilter value={range} onChange={onRangeChange} inline />
+        {data ? <FacilityFilter value={facility} onChange={setFacility} sites={data} /> : null}
+      </div>
 
       {error ? (
         <div className="state state-error">Could not load sites — {error}</div>
@@ -58,7 +68,7 @@ export default function SiteOverview({ range, onRangeChange }) {
 
       {data ? (
         <div className={`grid grid-sites${loading ? ' is-refetching' : ''}`}>
-          {data.map((site) => (
+          {shown.map((site) => (
             <SiteCard key={site.site_id} site={site} />
           ))}
         </div>
@@ -66,6 +76,10 @@ export default function SiteOverview({ range, onRangeChange }) {
 
       {data && data.length === 0 ? (
         <div className="state">No sites are reporting yet.</div>
+      ) : null}
+
+      {data && data.length > 0 && shown.length === 0 ? (
+        <div className="state">No blocks at that facility in this window.</div>
       ) : null}
     </div>
   )

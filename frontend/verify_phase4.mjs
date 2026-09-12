@@ -95,7 +95,12 @@ async function main() {
     check(`no console errors or failed requests — ${screen}`, page.problems.length === 0,
       page.problems.slice(0, 4).join(' | '))
 
-  const [siteA, siteB] = sites
+  // A verified site and a flagged one, chosen by verdict rather than by
+  // position. With six blocks in the list, sites[0] and sites[1] can easily be
+  // two of the same verdict -- and the whole point of switching between them
+  // here is to prove the screen re-renders a *different* verdict.
+  const siteA = sites.find((s) => s.status === 'verified') ?? sites[0]
+  const siteB = sites.find((s) => s.status !== siteA.status) ?? sites[1]
 
   // --- 4. screen 1: site overview ----------------------------------------
   heading('4. Screen 1 — Site Overview')
@@ -123,6 +128,61 @@ async function main() {
     eq(`card ${i + 1} sparkline plots every trend point`, cards[i]?.sparkPoints, s.trend.length)
     eq(`card ${i + 1} links to its detail screen`, cards[i]?.href, `#/site/${s.site_id}`)
   }
+  // --- 4b. the facility selector ------------------------------------------
+  // Six blocks across two facilities: the control has to actually narrow the
+  // grid, not merely exist. Every assertion below is against what the API said
+  // belongs to that operator, so a filter that dropped or duplicated a block
+  // would fail here rather than look plausible on screen.
+  const operators = [...new Set(sites.map((s) => s.operator))]
+
+  const options = await page.evaluate(`() => [...document.querySelectorAll('.select option')]
+    .map((o) => ({ value: o.value, label: o.textContent }))`)
+  eq('the facility selector offers every facility plus "all"', options.length, operators.length + 1)
+  eq('the first option is the unfiltered view', options[0]?.value, 'all')
+  check('every facility from the API is an option',
+    operators.every((o) => options.some((opt) => opt.value === o)),
+    options.map((o) => o.value).join(' | '))
+  check('the "all" option states the block count', options[0]?.label.includes(String(sites.length)),
+    options[0]?.label)
+
+  const namesFor = (operator) => sites.filter((s) => s.operator === operator).map((s) => s.name).sort()
+  const shownNames = `() => [...document.querySelectorAll('.site-name')].map((n) => n.textContent).sort()`
+
+  for (const operator of operators) {
+    // Driven the way a reader drives it: set the value and dispatch the event
+    // React listens for, rather than calling the handler directly.
+    await page.evaluate(`() => {
+      const sel = document.querySelector('.select')
+      const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set
+      setter.call(sel, ${JSON.stringify(operator)})
+      sel.dispatchEvent(new Event('change', { bubbles: true }))
+      return true
+    }`)
+    const expected = namesFor(operator)
+    await page.waitFor(
+      `() => document.querySelectorAll('.site-card').length === ${expected.length}`,
+      10_000, `filtered to ${operator}`)
+    const shown = await page.evaluate(shownNames)
+    check(`selecting "${operator}" shows exactly its blocks`,
+      JSON.stringify(shown) === JSON.stringify(expected),
+      `${shown.join(', ')}  (want ${expected.join(', ')})`)
+  }
+
+  await page.evaluate(`() => {
+    const sel = document.querySelector('.select')
+    const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set
+    setter.call(sel, 'all')
+    sel.dispatchEvent(new Event('change', { bubbles: true }))
+    return true
+  }`)
+  await page.waitFor(`() => document.querySelectorAll('.site-card').length === ${sites.length}`,
+    10_000, 'filter cleared')
+  const restored = await page.evaluate(shownNames)
+  check('clearing the filter restores every block',
+    JSON.stringify(restored) === JSON.stringify(sites.map((s) => s.name).sort()),
+    `${restored.length} blocks back`)
+  noProblems('Facility filter')
+
   check('the two sites show different verdicts (the demo contrast is live)',
     new Set(sites.map((s) => s.status)).size === 2,
     sites.map((s) => `${s.site_id}=${s.status}`).join(' '))
