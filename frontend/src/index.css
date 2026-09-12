@@ -26,7 +26,10 @@
   /* Panels are glass: translucent over the aurora, blurred. --surface-solid is
      for the few places translucency is wrong -- tooltips, sticky table heads
      and native controls, which must not show the chart through them. */
-  --surface: rgba(16, 32, 39, 0.62);
+  /* Raised alongside the aurora: the stronger the ground, the more of it bleeds
+     through a translucent panel, and body copy has to stay readable over
+     whichever wash happens to sit behind that card. */
+  --surface: rgba(16, 32, 39, 0.74);
   --surface-solid: #0e1f26;
   --line: rgba(94, 234, 212, 0.14);
   --line-strong: rgba(94, 234, 212, 0.3);
@@ -93,9 +96,10 @@
 
   /* Aurora: three slow radial washes behind everything, drifting. This is the
      whole reason the glass reads as glass. */
-  --aurora-1: rgba(13, 148, 136, 0.34);
-  --aurora-2: rgba(56, 189, 248, 0.17);
-  --aurora-3: rgba(16, 185, 129, 0.18);
+  --aurora-1: rgba(13, 148, 136, 0.72);
+  --aurora-2: rgba(56, 189, 248, 0.4);
+  --aurora-3: rgba(16, 185, 129, 0.46);
+  --aurora-4: rgba(45, 212, 191, 0.3);
 
   /* Liberation Serif and Nimbus Roman are the metric-compatible substitutes
      shipped on Linux -- the Docker image has no Times New Roman, and without
@@ -173,9 +177,13 @@
   --surface-gradient: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   --blur: 0px;
 
-  --aurora-1: rgba(13, 148, 136, 0.1);
-  --aurora-2: rgba(56, 189, 248, 0.07);
-  --aurora-3: rgba(16, 185, 129, 0.07);
+  /* Light keeps the wash faint on purpose: this theme is the one that has to
+     survive a bad projector, and a tinted ground is the first thing a
+     washed-out beam turns to mud. */
+  --aurora-1: rgba(13, 148, 136, 0.16);
+  --aurora-2: rgba(56, 189, 248, 0.11);
+  --aurora-3: rgba(16, 185, 129, 0.11);
+  --aurora-4: rgba(13, 148, 136, 0.08);
 
   color-scheme: light;
 }
@@ -211,10 +219,11 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(40% 36% at 16% 10%, var(--aurora-1), transparent 68%),
-    radial-gradient(34% 32% at 84% 6%, var(--aurora-2), transparent 68%),
-    radial-gradient(46% 42% at 62% 82%, var(--aurora-3), transparent 70%);
-  filter: blur(18px);
+    radial-gradient(56% 48% at 14% 8%, var(--aurora-1), transparent 72%),
+    radial-gradient(48% 44% at 88% 4%, var(--aurora-2), transparent 72%),
+    radial-gradient(62% 54% at 66% 84%, var(--aurora-3), transparent 74%),
+    radial-gradient(40% 38% at 6% 58%, var(--aurora-4), transparent 70%);
+  filter: blur(26px);
   animation: aurora-drift 28s ease-in-out infinite alternate;
 }
 
