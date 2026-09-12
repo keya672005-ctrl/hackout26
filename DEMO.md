@@ -41,6 +41,9 @@ cloud dependency" is a feature of the architecture, so say that instead.
    not.
 4. Close Docker Desktop and spare VS Code windows. This machine has 7.7 GB and
    the demo is the only thing that matters for the next ten minutes.
+5. Glance at the room. If the projector is washing out the darks, switch to the
+   light theme now with the button at the top right — not mid-demo. The choice
+   is remembered, so it survives the tab switch to the fallback.
 
 ---
 
@@ -68,6 +71,7 @@ cloud dependency" is a feature of the architecture, so say that instead.
 | "port is busy" in the output | Nothing to do, it takes the next port and prints the URL it actually used. |
 | A chart is empty | Check the reporting window filter is on **6 weeks**. |
 | Print dialog won't open | The report page still shows every figure on screen — read them off it. |
+| The projector washes the screen out | Hit the ☀/☽ button at the top right. It switches to the light theme, which is high-contrast ink on white and survives a bad projector. One click, no reload. |
 | Laptop dies entirely | The deployed link works from any phone, including on mobile data. |
 
 ---

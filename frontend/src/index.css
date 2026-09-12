@@ -1,9 +1,134 @@
-/* Design tokens from the Phase 0 design canvas (see CONTEXT.md section Design).
-   The palette is the canvas palette -- teal accent, amber for review state,
-   slate ink on white cards. The typography is the editorial pass on top of it:
-   one serif family, hierarchy from size and letter-spacing rather than from
-   mixing faces. */
+/* Design tokens.
+ *
+ * TWO THEMES, one token set. The default is the dark "bioluminescent" theme --
+ * deep ocean ground, glass panels, teal that actually glows, which is what
+ * algae does. `:root[data-theme='light']` restores the Phase 0 design-canvas
+ * palette (teal accent, amber review state, slate ink on white) as the
+ * projector-safe fallback. The toggle in the header flips `data-theme` on
+ * <html> and remembers the choice; `index.html` sets the attribute before
+ * first paint so there is no flash of the wrong theme.
+ *
+ * Every rule below this block is written against tokens only. That is what
+ * makes two themes -- and the print stylesheet, which is a third -- cost one
+ * declaration each instead of a parallel set of overrides.
+ *
+ * TYPOGRAPHY is split rather than single-family: Times carries the display
+ * voice (page titles, figure titles, site names, the big numbers) and the
+ * system sans carries the interface (labels, badges, controls, body copy,
+ * tables). The editorial gravitas stays where it reads as deliberate; the
+ * chrome stops looking unstyled. No webfonts -- the stage fallback fails the
+ * build if the shell loads anything from the internet.
+ */
 :root {
+  /* --- dark, the default ------------------------------------------------ */
+  --canvas: #050e13;
+  --canvas-deep: #03080b;
+  /* Panels are glass: translucent over the aurora, blurred. --surface-solid is
+     for the few places translucency is wrong -- tooltips, sticky table heads
+     and native controls, which must not show the chart through them. */
+  --surface: rgba(16, 32, 39, 0.62);
+  --surface-solid: #0e1f26;
+  --line: rgba(94, 234, 212, 0.14);
+  --line-strong: rgba(94, 234, 212, 0.3);
+  --grid: rgba(94, 234, 212, 0.09);
+
+  --teal-700: #14b8a6;
+  --teal-600: #2dd4bf;
+  --teal-50: rgba(45, 212, 191, 0.1);
+  --teal-line: rgba(45, 212, 191, 0.32);
+  --amber-500: #fbbf24;
+  --amber-700: #fbbf24;
+  --amber-50: rgba(251, 191, 36, 0.1);
+  --amber-line: rgba(251, 191, 36, 0.32);
+
+  --ink-900: #eaf6f3;
+  --ink-700: #a7c3be;
+  --ink-500: #7d9a95;
+  --ink: #eaf6f3;
+  --text-primary: #eaf6f3;
+  --text-secondary: #a7c3be;
+  --text-muted: #7d9a95;
+  --on-accent: #ffffff;
+
+  /* Chart series -- categorical slots, validated for CVD separation (worst
+     adjacent dE 24.7 protan / 33.6 normal vision). The hue opposition that
+     does that work is blue vs orange; the dark theme lifts both in lightness
+     to hold contrast against the ground without touching the hues, so the
+     separation survives the theme. Deliberately NOT the brand teal or the
+     status amber: those two are reserved for UI accent and verification
+     state, and a status colour must never double as a series identity. */
+  --series-sensor: #5aaeff;
+  --series-satellite: #ff9152;
+
+  /* Verification state. Always shipped with an icon and a text label -- never
+     colour alone. */
+  --status-verified-fg: #35dcb7;
+  --status-verified-bg: rgba(45, 212, 191, 0.12);
+  --status-verified-line: rgba(45, 212, 191, 0.34);
+  --status-review-fg: #fbbf24;
+  --status-review-bg: rgba(251, 191, 36, 0.1);
+  --status-review-line: rgba(251, 191, 36, 0.32);
+  --status-error-fg: #fb7185;
+
+  /* Controls. A filled teal pill works on white and turns to mud on black, so
+     the active state is a lit translucent chip in dark and a solid fill in
+     light -- same affordance, different medium. */
+  --pill-bg: rgba(45, 212, 191, 0.18);
+  --pill-fg: #7ff0dd;
+  --pill-line: rgba(45, 212, 191, 0.42);
+  --btn-bg: rgba(45, 212, 191, 0.16);
+  --btn-bg-hover: rgba(45, 212, 191, 0.28);
+  --btn-fg: #8df3e2;
+  --btn-line: rgba(45, 212, 191, 0.45);
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 10px 30px rgba(0, 0, 0, 0.34);
+  --shadow-lift: 0 20px 46px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(45, 212, 191, 0.24),
+    0 0 30px rgba(45, 212, 191, 0.15);
+  --glow: 0 0 26px rgba(45, 212, 191, 0.18);
+  --accent-gradient: linear-gradient(135deg, rgba(13, 148, 136, 0.36) 0%,
+    rgba(6, 26, 34, 0.86) 52%, rgba(8, 58, 74, 0.78) 100%);
+  --surface-gradient: linear-gradient(135deg, rgba(24, 44, 52, 0.7) 0%,
+    rgba(12, 26, 32, 0.6) 100%);
+  --blur: 14px;
+
+  /* Aurora: three slow radial washes behind everything, drifting. This is the
+     whole reason the glass reads as glass. */
+  --aurora-1: rgba(13, 148, 136, 0.34);
+  --aurora-2: rgba(56, 189, 248, 0.17);
+  --aurora-3: rgba(16, 185, 129, 0.18);
+
+  /* Liberation Serif and Nimbus Roman are the metric-compatible substitutes
+     shipped on Linux -- the Docker image has no Times New Roman, and without
+     them the deployed page falls back to some other serif than this was set
+     in. DejaVu / Liberation Sans and Mono cover the same gap for the other
+     two stacks. */
+  --font-serif: 'Times New Roman', Times, 'Liberation Serif', 'Nimbus Roman', serif;
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
+    'DejaVu Sans', 'Liberation Sans', Arial, sans-serif;
+  --font-display: var(--font-serif);
+  --font-heading: var(--font-display);
+  --font-body: var(--font-sans);
+  --font-mono: ui-monospace, 'Cascadia Mono', 'Segoe UI Mono', Consolas,
+    'DejaVu Sans Mono', 'Liberation Mono', monospace;
+
+  --radius: 14px;
+  --radius-sm: 9px;
+  --ease: 180ms ease;
+  --ease-out: 560ms cubic-bezier(0.22, 0.7, 0.25, 1);
+
+  color-scheme: dark;
+}
+
+/* --- light: the Phase 0 canvas palette, unchanged ------------------------ */
+:root[data-theme='light'] {
+  --canvas: #f8fafc;
+  --canvas-deep: #eef2f6;
+  --surface: #ffffff;
+  --surface-solid: #ffffff;
+  --line: #e2e8f0;
+  --line-strong: #cbd5e1;
+  --grid: #eef2f6;
+
   --teal-700: #0f766e;
   --teal-600: #0d9488;
   --teal-50: #f0fdfa;
@@ -12,25 +137,19 @@
   --amber-700: #b45309;
   --amber-50: #fffbeb;
   --amber-line: #fde68a;
+
   --ink-900: #0f172a;
   --ink-700: #334155;
   --ink-500: #64748b;
   --ink: #0f172a;
-  --line: #e2e8f0;
-  --line-strong: #cbd5e1;
-  --surface: #ffffff;
-  --canvas: #f8fafc;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --on-accent: #ffffff;
 
-  /* Chart series -- categorical slots, validated for CVD separation against a
-     white surface (worst adjacent dE 24.7 protan / 33.6 normal vision).
-     Deliberately NOT the brand teal or the status amber: those two are
-     reserved for UI accent and verification state, and a status colour must
-     never double as a series identity. */
   --series-sensor: #2a78d6;
   --series-satellite: #eb6834;
 
-  /* Verification state. Always shipped with an icon and a text label -- never
-     colour alone. */
   --status-verified-fg: #0f766e;
   --status-verified-bg: #f0fdfa;
   --status-verified-line: #ccfbf1;
@@ -39,28 +158,24 @@
   --status-review-line: #fde68a;
   --status-error-fg: #b45309;
 
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
-  --grid: #eef2f6;
-  --on-accent: #ffffff;
+  --pill-bg: #0f766e;
+  --pill-fg: #ffffff;
+  --pill-line: #0f766e;
+  --btn-bg: #0f766e;
+  --btn-bg-hover: #0d9488;
+  --btn-fg: #ffffff;
+  --btn-line: #0f766e;
 
-  /* One typeface, throughout. Liberation Serif and Nimbus Roman are the
-     metric-compatible substitutes shipped on Linux -- the Docker image has no
-     Times New Roman, and without them the deployed page falls back to some
-     other serif than this was set in. */
-  --font-serif: 'Times New Roman', Times, 'Liberation Serif', 'Nimbus Roman', serif;
-  --font-heading: var(--font-serif);
-  --font-body: var(--font-serif);
-  --font-mono: var(--font-serif);
-
-  --radius: 10px;
-  --radius-sm: 7px;
   --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
-  --shadow-lift: 0 6px 18px rgba(15, 23, 42, 0.1);
+  --shadow-lift: 0 10px 28px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(13, 148, 136, 0.18);
+  --glow: 0 0 22px rgba(13, 148, 136, 0.14);
   --accent-gradient: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
   --surface-gradient: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  --ease: 180ms ease;
+  --blur: 0px;
+
+  --aurora-1: rgba(13, 148, 136, 0.1);
+  --aurora-2: rgba(56, 189, 248, 0.07);
+  --aurora-3: rgba(16, 185, 129, 0.07);
 
   color-scheme: light;
 }
@@ -74,11 +189,33 @@ body {
   background: var(--canvas);
   color: var(--text-primary);
   font-family: var(--font-body);
-  /* Times sets small: 17px here reads as about 15px of a humanist sans. */
-  font-size: 17px;
-  line-height: 1.5;
+  /* The sans sets larger than Times did at the same size, so the body drops
+     from 17px to 15.5 and reads as the same measure. */
+  font-size: 15.5px;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  min-height: 100vh;
+}
+
+/* The aurora. Three radial washes on a fixed layer behind the content, drifting
+   slowly against each other -- this is what the glass panels are translucent
+   *to*, and without it they would just be grey. Fixed rather than scrolled, so
+   the ground stays put and only the document moves over it. Inert: no pointer
+   events, no place in the tab order, and it is removed entirely for print and
+   for a reader who has asked for less motion. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: -25%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(40% 36% at 16% 10%, var(--aurora-1), transparent 68%),
+    radial-gradient(34% 32% at 84% 6%, var(--aurora-2), transparent 68%),
+    radial-gradient(46% 42% at 62% 82%, var(--aurora-3), transparent 70%);
+  filter: blur(18px);
+  animation: aurora-drift 28s ease-in-out infinite alternate;
 }
 
 h1,
@@ -90,11 +227,22 @@ h3 {
   margin: 0;
 }
 
+/* The display voice: titles and the figures the screens exist to state. */
+.page-title,
+.card-title,
+.site-name,
+.brand-name,
+.tile-value,
+.hero-value,
+.site-figure-value {
+  font-family: var(--font-display);
+}
+
 code,
 .mono {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
 }
 
 a {
@@ -326,7 +474,7 @@ thead th {
 }
 
 .tile-value {
-  font-family: var(--font-body);
+  font-family: var(--font-display);
   font-size: 36px;
   font-weight: 700;
   line-height: 1;
@@ -978,6 +1126,12 @@ tbody tr:last-child td {
   .brand-sub {
     font-size: 12px;
   }
+
+  /* The team tag is desktop furniture. On a phone the header has room for the
+     brand and the theme switch, and the switch is the one that does something. */
+  .header-tools .rule-tag {
+    display: none;
+  }
 }
 
 /* --- report export ------------------------------------------------------ */
@@ -1022,6 +1176,371 @@ tbody tr:last-child td {
   display: none;
 }
 
+/* --- glass, depth and light --------------------------------------------- */
+/*
+ * Everything from here to the print block is the dark theme's physics: panels
+ * that sit *above* a lit ground rather than beside it. In the light theme the
+ * same rules resolve to --blur: 0 and opaque surfaces, so they cost nothing
+ * and the Phase 0 palette comes back flat and clean.
+ */
+
+/* The masthead stays with the reader. It is the only always-visible surface,
+   so it carries the strongest blur. */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: color-mix(in srgb, var(--canvas) 78%, transparent);
+  backdrop-filter: blur(calc(var(--blur) + 6px)) saturate(1.4);
+  -webkit-backdrop-filter: blur(calc(var(--blur) + 6px)) saturate(1.4);
+}
+
+.card {
+  backdrop-filter: blur(var(--blur)) saturate(1.25);
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(1.25);
+}
+
+/* The one featured panel per screen gets a rim-light: a hairline of the accent
+   at the top edge, the way a lit surface catches its own edge. */
+.page:has(.grid-sites) .page-head,
+.grid-tiles > .card:first-child,
+.report-page .stack > section:first-of-type {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--teal-line);
+  box-shadow: var(--shadow), var(--glow);
+}
+
+.page:has(.grid-sites) .page-head::after,
+.grid-tiles > .card:first-child::after,
+.report-page .stack > section:first-of-type::after {
+  content: '';
+  position: absolute;
+  inset-inline: 12%;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--teal-600), transparent);
+  opacity: 0.8;
+}
+
+/* The masthead gradient breathes -- a very slow pan, not a loop anyone will
+   catch looking at it directly. */
+/* Both animations, named together on purpose: this selector outranks the
+   blanket `.page-head { animation: rise }` below, so declaring only the pan
+   here would silently drop the masthead's entrance. */
+.page:has(.grid-sites) .page-head {
+  background-size: 180% 180%;
+  animation: rise var(--ease-out) both, accent-pan 22s ease-in-out infinite alternate;
+}
+
+/* --- site cards, lit ----------------------------------------------------- */
+
+.site-card:hover,
+.site-card:focus-visible {
+  transform: translateY(-4px);
+  border-color: var(--teal-line);
+  box-shadow: var(--shadow-lift);
+}
+
+/* A sweep of light crosses the card on hover, left to right, once. It is the
+   single most "designed" thing on the screen and it costs one pseudo-element. */
+.site-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.site-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 38%,
+    color-mix(in srgb, var(--teal-600) 16%, transparent) 50%, transparent 62%);
+  transform: translateX(-100%);
+  opacity: 0;
+  transition: none;
+}
+
+.site-card:hover::after,
+.site-card:focus-visible::after {
+  opacity: 1;
+  animation: sheen 820ms cubic-bezier(0.3, 0, 0.2, 1);
+}
+
+/* --- verification state, lit --------------------------------------------- */
+
+.badge-verified {
+  box-shadow: 0 0 0 1px var(--status-verified-line),
+    0 0 18px color-mix(in srgb, var(--status-verified-fg) 22%, transparent);
+}
+
+/* Review is the state the platform exists to surface, so it pulses -- slowly,
+   and only the halo, never the text. */
+.badge-needs_review {
+  box-shadow: 0 0 0 1px var(--status-review-line),
+    0 0 18px color-mix(in srgb, var(--status-review-fg) 22%, transparent);
+  animation: review-pulse 3.2s ease-in-out infinite;
+}
+
+.gauge-track {
+  background: color-mix(in srgb, var(--text-muted) 22%, transparent);
+  height: 8px;
+  border-radius: 4px;
+}
+
+.gauge-fill {
+  border-radius: 4px;
+  box-shadow: 0 0 16px currentColor;
+  /* The bar grows to its width on first paint: the divergence figure arriving
+     rather than simply being there. */
+  animation: gauge-grow 900ms 120ms cubic-bezier(0.22, 0.7, 0.25, 1) both;
+  transform-origin: left center;
+}
+
+/* --- controls ------------------------------------------------------------ */
+
+.segmented {
+  background: var(--surface);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+}
+
+.segmented button[aria-pressed='true'] {
+  background: var(--pill-bg);
+  color: var(--pill-fg);
+  box-shadow: inset 0 0 0 1px var(--pill-line);
+}
+
+/* Opaque on purpose: the native dropdown, the sticky table head and the chart
+   tooltip must not show what is behind them. */
+.select,
+.tooltip,
+thead th {
+  background: var(--surface-solid);
+}
+
+.select:hover,
+.select:focus-visible {
+  border-color: var(--teal-600);
+  box-shadow: var(--glow);
+}
+
+.print-button {
+  background: var(--btn-bg);
+  border-color: var(--btn-line);
+  color: var(--btn-fg);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+}
+
+.print-button:hover {
+  background: var(--btn-bg-hover);
+  border-color: var(--btn-line);
+  box-shadow: var(--shadow-lift);
+}
+
+/* --- theme toggle -------------------------------------------------------- */
+
+.header-tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.theme-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--teal-600);
+  cursor: pointer;
+  transition: color var(--ease), border-color var(--ease), box-shadow var(--ease),
+    transform var(--ease);
+}
+
+.theme-toggle:hover {
+  border-color: var(--teal-600);
+  box-shadow: var(--glow);
+  transform: rotate(-18deg);
+}
+
+.theme-toggle svg {
+  display: block;
+}
+
+/* --- motion -------------------------------------------------------------- */
+/*
+ * One entrance, used everywhere: fade up. The stagger is done with nth-child
+ * delays rather than per-element JS, so no page has to know it is animating.
+ *
+ * `both` holds the from-state through the delay. The important consequence is
+ * that the resting style of every one of these elements is the *visible* one:
+ * kill the animation -- for print, or for a reader who asked for less motion --
+ * and the element is simply there. An entrance that hides its own content when
+ * disabled is how a report exports blank.
+ */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes aurora-drift {
+  from {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(2%, 2%, 0) scale(1.08);
+  }
+}
+
+@keyframes accent-pan {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes sheen {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes review-pulse {
+  50% {
+    box-shadow: 0 0 0 1px var(--status-review-line),
+      0 0 26px color-mix(in srgb, var(--status-review-fg) 42%, transparent);
+  }
+}
+
+@keyframes gauge-grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* The plot wipes in left to right, the direction time runs on every chart on
+   the platform. Applied to the recharts wrapper (a div) rather than to the
+   path, so it is independent of path length and cannot disturb the
+   stroke-dasharray that distinguishes the satellite series from the sensor
+   one. */
+@keyframes wipe {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.page-head,
+.filter-row,
+.grid-sites > .card,
+.grid-tiles > .card,
+.stack > * {
+  animation: rise var(--ease-out) both;
+}
+
+.grid-sites > .card:nth-child(2),
+.grid-tiles > .card:nth-child(2),
+.stack > *:nth-child(2) {
+  animation-delay: 70ms;
+}
+
+.grid-sites > .card:nth-child(3),
+.grid-tiles > .card:nth-child(3),
+.stack > *:nth-child(3) {
+  animation-delay: 140ms;
+}
+
+.grid-sites > .card:nth-child(4),
+.grid-tiles > .card:nth-child(4),
+.stack > *:nth-child(4) {
+  animation-delay: 210ms;
+}
+
+.grid-sites > .card:nth-child(5),
+.stack > *:nth-child(5) {
+  animation-delay: 280ms;
+}
+
+.grid-sites > .card:nth-child(n + 6),
+.stack > *:nth-child(n + 6) {
+  animation-delay: 350ms;
+}
+
+.chart-frame .recharts-wrapper {
+  animation: wipe 1100ms 160ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* The sparkline draws itself. pathLength="1" on the path normalises the dash
+   units, so one keyframe works for every card whatever the data does. */
+.site-card-foot svg path {
+  /* Resting state is offset 0 -- a fully drawn line. The hidden state lives in
+     the keyframe, never here, for the same reason the entrances do. */
+  stroke-dasharray: 1;
+  animation: spark-draw 900ms 240ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.site-card-foot svg circle {
+  animation: fade-in 400ms 1040ms ease both;
+}
+
+@keyframes spark-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* --- reduced motion ------------------------------------------------------ */
+/*
+ * Everything above is decoration over a resting state that is already correct,
+ * so honouring the preference is one blanket rule rather than a list. It sits
+ * here, after the rules it disables, because a cascade does not care about
+ * intent.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  body::before {
+    /* The aurora is static rather than absent: it is the ground the glass is
+       translucent to, and removing it would leave the panels grey. */
+    display: block;
+  }
+
+  .site-card:hover,
+  .print-button:hover,
+  .theme-toggle:hover {
+    transform: none;
+  }
+}
+
 /* --- print -------------------------------------------------------------- */
 /*
  * The exported PDF is the deliverable, not a screenshot of the app, so the app
@@ -1038,10 +1557,18 @@ tbody tr:last-child td {
   }
 
   /* Screen tokens re-point at ink. Redefining the tokens rather than
-     overriding each rule means anything token-driven follows along. */
-  :root {
+     overriding each rule means anything token-driven follows along -- which is
+     what lets a third "theme" cost a dozen declarations. The selector has to
+     name both data-theme values, not just :root: the theme blocks are
+     attribute-qualified and would otherwise outrank this one and print the
+     dark theme onto paper. */
+  :root,
+  :root[data-theme='dark'],
+  :root[data-theme='light'] {
     --canvas: #ffffff;
+    --canvas-deep: #ffffff;
     --surface: #ffffff;
+    --surface-solid: #ffffff;
     --ink: #000000;
     --text-primary: #000000;
     --text-secondary: #1f2937;
@@ -1049,6 +1576,43 @@ tbody tr:last-child td {
     --line: #9ca3af;
     --line-strong: #6b7280;
     --grid: #d1d5db;
+    --teal-line: #9ca3af;
+    --blur: 0px;
+    --glow: none;
+    --shadow: none;
+    --shadow-lift: none;
+    --status-verified-fg: #000000;
+    --status-review-fg: #000000;
+    color-scheme: light;
+  }
+
+  /* Paper has no motion and no depth. Killing both at the root means a figure
+     cannot export mid-entrance -- a panel caught at opacity 0 prints blank,
+     and there is no second chance on a PDF. */
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    text-shadow: none !important;
+  }
+
+  /* The aurora is the one element with no ink equivalent. */
+  body::before,
+  .page:has(.grid-sites) .page-head::after,
+  .grid-tiles > .card:first-child::after,
+  .report-page .stack > section:first-of-type::after,
+  .site-card::after {
+    display: none !important;
+  }
+
+  .badge-verified,
+  .badge-needs_review,
+  .gauge-fill,
+  .card {
+    box-shadow: none !important;
   }
 
   html,

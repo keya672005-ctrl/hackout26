@@ -46,8 +46,8 @@ export default function Co2Chart({ rows, refetching }) {
             <defs>
               {/* A wash, never a saturated block. */}
               <linearGradient id="co2-wash" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#2a78d6" stopOpacity={0.14} />
-                <stop offset="100%" stopColor="#2a78d6" stopOpacity={0.01} />
+                <stop offset="0%" stopColor="var(--series-sensor)" stopOpacity={0.14} />
+                <stop offset="100%" stopColor="var(--series-sensor)" stopOpacity={0.01} />
               </linearGradient>
             </defs>
             <CartesianGrid stroke="var(--grid)" strokeWidth={1} vertical={false} />
@@ -79,7 +79,7 @@ export default function Co2Chart({ rows, refetching }) {
               fill="url(#co2-wash)"
               isAnimationActive={false}
               dot={false}
-              activeDot={{ r: 4.5, stroke: 'var(--surface)', strokeWidth: 2, fill: COLOR }}
+              activeDot={{ r: 4.5, stroke: 'var(--surface-solid)', strokeWidth: 2, fill: COLOR }}
             />
           </AreaChart>
         </ResponsiveContainer>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import SiteOverview from './pages/SiteOverview'
 import SiteDetail from './pages/SiteDetail'
 import Report from './pages/Report'
+import ThemeToggle from './components/ThemeToggle'
 
 /**
  * Hash routing, hand-rolled.
@@ -57,7 +58,10 @@ export default function App() {
               <span className="brand-sub">Sensor data, cross-verified against satellite</span>
             </span>
           </a>
-          <span className="rule-tag">HackOut&apos;26 · Pixel Error</span>
+          <span className="header-tools">
+            <span className="rule-tag">HackOut&apos;26 · Pixel Error</span>
+            <ThemeToggle />
+          </span>
         </div>
       </header>
 

@@ -4,7 +4,29 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#050e13" />
     <title>Algae Carbon Monitoring</title>
+    <script>
+      // Theme, resolved before first paint.
+      //
+      // React cannot do this: by the time it mounts, the browser has already
+      // painted the default theme, and a reader who chose light watches the
+      // page flash dark on every load. Six lines inline in <head>, running
+      // before the body exists, is the whole fix. Dark is the default; the
+      // stored choice wins if there is one. Inline on purpose — this must not
+      // be a separate request, and the stage fallback fails the build if the
+      // shell reaches the network at all.
+      ;(function () {
+        var theme = 'dark'
+        try {
+          var stored = localStorage.getItem('acm-theme')
+          if (stored === 'light' || stored === 'dark') theme = stored
+        } catch (err) {
+          /* private window: fall through to the default */
+        }
+        document.documentElement.setAttribute('data-theme', theme)
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

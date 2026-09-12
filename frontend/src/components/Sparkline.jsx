@@ -22,6 +22,10 @@ export default function Sparkline({ points = [], width = 96, height = 28 }) {
     <svg width={width} height={height} aria-hidden="true" focusable="false">
       <path
         d={d}
+        /* Normalises the path to one unit so the draw-in animation in the
+           stylesheet is a single keyframe rather than a guess at the length of
+           whatever this card's data happened to trace. */
+        pathLength={1}
         fill="none"
         stroke="var(--series-sensor)"
         strokeWidth="2"
@@ -33,7 +37,7 @@ export default function Sparkline({ points = [], width = 96, height = 28 }) {
         cy={lastY}
         r="3"
         fill="var(--series-sensor)"
-        stroke="var(--surface)"
+        stroke="var(--surface-solid)"
         strokeWidth="2"
       />
     </svg>

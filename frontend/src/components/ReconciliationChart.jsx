@@ -34,7 +34,7 @@ function EndDot({ cx, cy, index, lastIndex, color, value }) {
   return (
     <g>
       {/* 2px surface ring keeps the marker legible where the lines cross */}
-      <circle cx={cx} cy={cy} r={4.5} fill={color} stroke="var(--surface)" strokeWidth={2} />
+      <circle cx={cx} cy={cy} r={4.5} fill={color} stroke="var(--surface-solid)" strokeWidth={2} />
       <text
         x={cx - 9}
         y={cy - 10}
@@ -168,7 +168,7 @@ export default function ReconciliationChart({ rows, refetching }) {
                 strokeDasharray={dash ?? undefined}
                 connectNulls
                 isAnimationActive={false}
-                activeDot={{ r: 4.5, stroke: 'var(--surface)', strokeWidth: 2, fill: color }}
+                activeDot={{ r: 4.5, stroke: 'var(--surface-solid)', strokeWidth: 2, fill: color }}
                 dot={(props) => (
                   <EndDot
                     key={`${key}-${props.index}`}
