@@ -28,6 +28,10 @@ A 3-screen dashboard mockup (Site Overview, Site Detail with sensor-vs-satellite
 
 (The design canvas is a hosted link in the Cowork conversation this context came from — if you need to re-open it, ask there rather than recreating it from scratch.)
 
+## Repo
+
+**https://github.com/keya672005-ctrl/hackout26** — owned by Keya; push as the **`Saurabh-2342`** GitHub account, which is the one holding collaborator Write access. The `Saurabh-050570` account on this machine has read-only access and gets a 403, so if a push is denied, check `gh api user --jq .login` before anything else (`gh auth switch` flips between them).
+
 ## Current status
 
 - [x] Problem selected, feasibility-checked
@@ -40,7 +44,7 @@ A 3-screen dashboard mockup (Site Overview, Site Detail with sensor-vs-satellite
 - [x] **Phase 3 — Verification / Reconciliation Engine** — `verification/reconcile.py` compares reported biomass density against the satellite NDCI as normalised trends over RULE-001's 14-day rolling window; `/api/sites/:id/verification` live, and `status` is now a real verdict everywhere (site-a verified, site-b needs_review). 26/26 checks pass via `backend/verify_phase3.py` (see `prd.md` §11 Phase 3 for details)
 - [x] **Phase 4 — Frontend Dashboard** — three hash-routed screens (overview, site detail, report) wired to the live API, sensor-vs-satellite trend chart with both signals indexed to 100, verification panel plotting divergence against its tolerance. 75/75 checks pass via `node verify_phase4.mjs` in `frontend/` — it drives the production build in headless Chrome and compares every on-screen figure against the API response behind it (see `prd.md` §11 Phase 4 for details)
 - [x] **Phase 5 — Reporting & Polish** — `reporting/report.py` + `GET /api/sites/:id/report` assemble the credit-readiness document (report id as a content fingerprint, `agreement_pct` = 100 − peak divergence); the Report screen exports via `window.print()` against a print stylesheet, A4, no PDF dependency. 100/100 checks pass via `node verify_phase5.mjs` in `frontend/` — it renders the real PDF through Chrome and cross-checks every figure against four independent sources (see `prd.md` §11 Phase 5 for details)
-- [~] **Phase 6 — Testing & Deployment** — the app now deploys as **one service on one origin**: FastAPI serves the built SPA itself (`Dockerfile` + `render.yaml`, Render free plan, health check on `/health`). 120/120 checks pass via `node verify_phase6.mjs` in `frontend/`, and 116/116 against the **Docker image itself** via `node verify_phase6.mjs --target http://127.0.0.1:8123`. **Remaining:** push to GitHub, create the Render service, then re-run the gate with `--target <live url>` and open the link on a real phone (see `prd.md` §11 Phase 6 — two checklist items are deliberately still open)
+- [~] **Phase 6 — Testing & Deployment** — the app now deploys as **one service on one origin**: FastAPI serves the built SPA itself (`Dockerfile` + `render.yaml`, Render free plan, health check on `/health`). 120/120 checks pass via `node verify_phase6.mjs` in `frontend/`, and 116/116 against the **Docker image itself** via `node verify_phase6.mjs --target http://127.0.0.1:8123`. **Remaining:** create the Render service (code is pushed), then re-run the gate with `--target <live url>` and open the link on a real phone (see `prd.md` §11 Phase 6 — two checklist items are deliberately still open)
 - [ ] Phase 7 — Pitch Prep
 
 ## Gotchas worth keeping
