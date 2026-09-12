@@ -46,8 +46,8 @@ export default function Co2Chart({ rows, refetching }) {
             <defs>
               {/* A wash, never a saturated block. */}
               <linearGradient id="co2-wash" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#687b55" stopOpacity={0.14} />
-                <stop offset="100%" stopColor="#687b55" stopOpacity={0.01} />
+                <stop offset="0%" stopColor="#2a78d6" stopOpacity={0.14} />
+                <stop offset="100%" stopColor="#2a78d6" stopOpacity={0.01} />
               </linearGradient>
             </defs>
             <CartesianGrid stroke="var(--grid)" strokeWidth={1} vertical={false} />
