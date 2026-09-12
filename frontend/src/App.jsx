@@ -49,7 +49,7 @@ export default function App() {
         <div className="app-header-inner">
           <a className="brand" href="#/">
             <span className="brand-mark" aria-hidden="true">
-              A
+              <img src="/favicon.svg" alt="" width="34" height="34" />
             </span>
             <span>
               <span className="brand-name">Algae Carbon Monitoring</span>

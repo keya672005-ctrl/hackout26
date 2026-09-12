@@ -1,45 +1,64 @@
-/* Design tokens from the Phase 0 design canvas (see CONTEXT.md § Design).
-   Phase 4 builds the real screens against these — don't re-derive a palette. */
+/* Art direction: moss + bone + ink, set entirely in Times New Roman.
+   The reference is a scientific journal, not a SaaS dashboard — hierarchy is
+   carried by size, weight, letter-spacing and whitespace rather than by colour,
+   and green is an accent on a bone canvas rather than the canvas itself. */
 :root {
-  --teal-700: #0f766e;
-  --teal-600: #0d9488;
-  --teal-50: #f0fdfa;
-  --amber-500: #f59e0b;
-  --amber-700: #b45309;
-  --amber-50: #fffbeb;
-  --ink-900: #0f172a;
-  --ink-700: #334155;
-  --ink-500: #64748b;
-  --line: #e2e8f0;
-  --surface: #ffffff;
-  --canvas: #f8fafc;
+  /* --- surfaces: ~70% of the screen is warm neutral, deliberately --------- */
+  --canvas: #eeede4;
+  --surface: #f8f7ef;
 
-  /* Chart series — categorical slots, validated for CVD separation against a
-     white surface (worst adjacent ΔE 24.7 protan / 33.6 normal vision).
-     Deliberately NOT the brand teal or the status amber: those two are
-     reserved for UI accent and verification state, and a status colour must
-     never double as a series identity. */
-  --series-sensor: #2a78d6;
-  --series-satellite: #eb6834;
+  /* --- moss ramp --------------------------------------------------------- */
+  --deep-moss: #34483a;
+  --moss: #687b55;
+  --light-moss: #aab394;
+
+  /* Never pure black, never pure white. */
+  --ink: #252b26;
+
+  /* Lines are moss at low opacity rather than grey: a neutral grey rule reads
+     cold against a warm canvas. */
+  --line: #dcdacb;
+  --line-strong: rgba(52, 72, 58, 0.26);
+  --grid: #e4e2d4;
+
+  /* Chart series — one monochromatic green system. The two are separated by
+     value rather than hue, and the legend also distinguishes them solid vs.
+     dashed, so they survive greyscale print and colour-blind vision. */
+  --series-sensor: #687b55;
+  --series-satellite: #34483a;
+  --series-agreement: #aab394;
 
   /* Verification state. Always shipped with an icon and a text label — never
      colour alone. */
-  --status-verified-fg: #0f766e;
-  --status-verified-bg: #f0fdfa;
-  --status-review-fg: #b45309;
-  --status-review-bg: #fffbeb;
+  --status-verified-fg: #53654e;
+  --status-verified-bg: #e5e9de;
+  --status-verified-line: #687b55;
+  --status-review-fg: #766f4f;
+  --status-review-bg: #f0eedf;
+  --status-review-line: #aab394;
+  --status-error-fg: #a65d52;
 
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
-  --grid: #eef2f6;
+  --text-primary: #252b26;
+  --text-secondary: #4a5349;
+  --text-muted: #676e61;
+  --on-moss: #f8f7ef;
 
-  --font-heading: 'Sora', system-ui, sans-serif;
-  --font-body: 'IBM Plex Sans', system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  /* One typeface, throughout. Liberation Serif and Nimbus Roman are the
+     metric-compatible substitutes shipped on Linux — the Docker image has no
+     Times New Roman, and without them the deployed page falls back to some
+     other serif than the one this was set in. */
+  --font-serif: 'Times New Roman', Times, 'Liberation Serif', 'Nimbus Roman', serif;
+  --font-heading: var(--font-serif);
+  --font-body: var(--font-serif);
+  --font-mono: var(--font-serif);
 
-  --radius: 14px;
-  --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
+  --radius: 10px;
+  --radius-sm: 7px;
+  --shadow: 0 1px 2px rgba(37, 43, 38, 0.05);
+  --shadow-lift: 0 6px 18px rgba(37, 43, 38, 0.1);
+  --moss-gradient: linear-gradient(135deg, #687b55 0%, #34483a 100%);
+  --surface-gradient: linear-gradient(135deg, #f8f7ef 0%, #eeede4 100%);
+  --ease: 180ms ease;
 
   color-scheme: light;
 }
@@ -53,24 +72,61 @@ body {
   background: var(--canvas);
   color: var(--text-primary);
   font-family: var(--font-body);
+  /* Times sets small: 17px here reads as about 15px of a humanist sans. */
+  font-size: 17px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 h1,
 h2,
 h3 {
   font-family: var(--font-heading);
-  letter-spacing: -0.01em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   margin: 0;
 }
 
 code,
 .mono {
   font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
 }
 
 a {
   color: inherit;
+}
+
+::selection {
+  background: var(--light-moss);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--moss);
+  outline-offset: 2px;
+}
+
+/* The one shared idiom: a small technical label set in caps. Every field name,
+   axis caption, unit and control on the platform uses it, so the interface
+   reads as one document rather than a set of widgets. */
+.eyebrow,
+.tile-label,
+.filter-label,
+.meta-key,
+.rule-tag,
+.badge,
+.site-link,
+.table-toggle,
+.gauge-scale,
+.tooltip-date,
+.print-button,
+thead th {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 700;
 }
 
 /* --- app shell ---------------------------------------------------------- */
@@ -84,7 +140,7 @@ a {
 .page {
   max-width: 1120px;
   margin: 0 auto;
-  padding-inline: 24px;
+  padding-inline: 32px;
 }
 
 .app-header-inner {
@@ -92,83 +148,109 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding-block: 16px;
+  padding-block: 18px;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 13px;
   text-decoration: none;
 }
 
 .brand-mark {
-  width: 30px;
-  height: 30px;
-  border-radius: 9px;
-  background: var(--teal-700);
+  width: 34px;
+  height: 34px;
+  flex: none;
   display: grid;
   place-items: center;
-  color: #fff;
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 15px;
+}
+
+.brand-mark img {
+  display: block;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
 }
 
 .brand-name {
   font-family: var(--font-heading);
-  font-weight: 600;
-  font-size: 15px;
-  line-height: 1.2;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
 }
 
 .brand-sub {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-muted);
+  font-style: italic;
 }
 
 .page {
-  padding-block: 28px 56px;
+  padding-block: 36px 72px;
 }
 
 .page-head {
-  margin-bottom: 20px;
+  margin-bottom: 26px;
 }
 
 .eyebrow {
   margin: 0;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--teal-700);
-  font-weight: 600;
+  font-size: 11px;
+  color: var(--moss);
 }
 
 .page-title {
-  font-size: 26px;
-  line-height: 1.2;
-  margin-top: 8px;
+  font-size: 34px;
+  line-height: 1.14;
+  margin-top: 10px;
 }
 
 .page-sub {
-  margin: 8px 0 0;
+  margin: 12px 0 0;
   color: var(--text-secondary);
-  font-size: 14px;
-  max-width: 68ch;
+  font-size: 16px;
+  line-height: 1.6;
+  max-width: 64ch;
 }
 
 .breadcrumb {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-muted);
   text-decoration: none;
-  margin-bottom: 14px;
+  margin-bottom: 18px;
+  transition: color var(--ease);
 }
 
 .breadcrumb:hover {
-  color: var(--teal-700);
+  color: var(--deep-moss);
+}
+
+/* The featured panel — one per screen, never more. On the overview it is the
+   masthead: the screen's argument, set like the standfirst of an article. */
+.page:has(.grid-sites) .page-head {
+  background: var(--moss-gradient);
+  color: var(--on-moss);
+  border-radius: var(--radius);
+  padding: 38px 36px 40px;
+  margin-bottom: 30px;
+}
+
+.page:has(.grid-sites) .page-head .eyebrow {
+  color: rgba(248, 247, 239, 0.7);
+}
+
+.page:has(.grid-sites) .page-head .page-title {
+  color: var(--on-moss);
+  font-size: 40px;
+}
+
+.page:has(.grid-sites) .page-head .page-sub {
+  color: rgba(248, 247, 239, 0.86);
 }
 
 /* --- cards -------------------------------------------------------------- */
@@ -181,88 +263,115 @@ a {
 }
 
 .card-pad {
-  padding: 20px;
+  padding: 26px 28px 28px;
 }
 
 .card-head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 16px;
+  gap: 24px;
   margin-bottom: 4px;
 }
 
+/* A figure title, not a widget label: the panel below it is a plate in a
+   report, so its title is set like one. */
 .card-title {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
 }
 
 .card-note {
-  margin: 4px 0 0;
-  font-size: 13px;
+  margin: 8px 0 0;
+  font-size: 13.5px;
+  line-height: 1.55;
   color: var(--text-muted);
-  max-width: 70ch;
+  max-width: 74ch;
 }
 
 .grid {
   display: grid;
-  gap: 16px;
+  gap: 18px;
 }
 
 .grid-sites {
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
 
 .grid-tiles {
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
 }
 
 .stack {
   display: grid;
-  gap: 16px;
+  gap: 18px;
 }
 
 /* --- stat tiles --------------------------------------------------------- */
 
 .tile {
-  padding: 18px 20px;
+  padding: 20px 22px 22px;
+  display: flex;
+  flex-direction: column;
 }
 
 .tile-label {
-  font-size: 12px;
+  font-size: 10.5px;
   color: var(--text-muted);
-  letter-spacing: 0.02em;
+  line-height: 1.4;
 }
 
 .tile-value {
   font-family: var(--font-body);
-  font-size: 28px;
-  font-weight: 600;
-  line-height: 1.15;
-  margin-top: 8px;
-  letter-spacing: -0.02em;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+  margin-top: 14px;
+  letter-spacing: -0.025em;
+  color: var(--ink);
 }
 
 .tile-unit {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 400;
   color: var(--text-muted);
-  margin-left: 4px;
+  margin-left: 5px;
+  letter-spacing: 0;
 }
 
 .tile-foot {
-  margin-top: 6px;
-  font-size: 12px;
+  margin-top: auto;
+  padding-top: 12px;
+  font-size: 13px;
   color: var(--text-muted);
 }
 
-/* The one hero figure on the report — proportional figures, same sans as
-   everything else (no display face, no tabular-nums at this size). */
+/* The featured panel on the site screen: the headline figure carries the one
+   gradient, so the eye lands on the number the page exists to state. */
+.grid-tiles > .card:first-child {
+  background: var(--moss-gradient);
+  border-color: var(--deep-moss);
+}
+
+.grid-tiles > .card:first-child .tile-label,
+.grid-tiles > .card:first-child .tile-foot,
+.grid-tiles > .card:first-child .tile-unit {
+  color: rgba(248, 247, 239, 0.72);
+}
+
+.grid-tiles > .card:first-child .tile-value {
+  color: var(--on-moss);
+}
+
+/* The one hero figure on the report. */
 .hero-value {
-  font-size: 44px;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
+  font-size: 60px;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  color: var(--ink);
 }
 
 /* --- status badge ------------------------------------------------------- */
@@ -270,29 +379,28 @@ a {
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 10px 4px 8px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
+  gap: 7px;
+  padding: 5px 10px 5px 9px;
+  border-radius: 4px;
+  font-size: 10.5px;
   white-space: nowrap;
 }
 
 .badge-verified {
   color: var(--status-verified-fg);
   background: var(--status-verified-bg);
-  border: 1px solid #ccfbf1;
+  border: 1px solid var(--status-verified-line);
 }
 
 .badge-needs_review {
   color: var(--status-review-fg);
   background: var(--status-review-bg);
-  border: 1px solid #fde68a;
+  border: 1px solid var(--status-review-line);
 }
 
 .badge-lg {
-  font-size: 13px;
-  padding: 6px 14px 6px 11px;
+  font-size: 12px;
+  padding: 7px 14px 7px 12px;
 }
 
 .badge svg {
@@ -305,48 +413,57 @@ a {
   display: block;
   text-decoration: none;
   color: inherit;
-  padding: 20px;
-  transition: border-color 120ms ease, box-shadow 120ms ease;
+  padding: 26px 26px 24px;
+  transition: transform var(--ease), box-shadow var(--ease), border-color var(--ease);
 }
 
 .site-card:hover,
 .site-card:focus-visible {
-  border-color: var(--teal-600);
-  box-shadow: 0 2px 6px rgba(15, 118, 110, 0.1);
+  transform: translateY(-2px);
+  border-color: var(--light-moss);
+  box-shadow: var(--shadow-lift);
+}
+
+.site-card-top > .badge {
+  flex: none;
 }
 
 .site-card-top {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
 }
 
 .site-name {
   font-family: var(--font-heading);
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.3;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
 }
 
 .site-species {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-muted);
   font-style: italic;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .site-figure {
-  margin-top: 18px;
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
   display: flex;
   align-items: baseline;
-  gap: 6px;
+  gap: 7px;
 }
 
 .site-figure-value {
-  font-size: 26px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--ink);
 }
 
 .site-figure-unit {
@@ -355,7 +472,7 @@ a {
 }
 
 .site-card-foot {
-  margin-top: 14px;
+  margin-top: 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -363,9 +480,8 @@ a {
 }
 
 .site-link {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--teal-700);
+  font-size: 11px;
+  color: var(--deep-moss);
 }
 
 /* --- filters ------------------------------------------------------------ */
@@ -373,59 +489,64 @@ a {
 .filter-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
   flex-wrap: wrap;
-  margin-bottom: 18px;
+  margin-bottom: 22px;
 }
 
 .filter-label {
-  font-size: 12px;
+  font-size: 10.5px;
   color: var(--text-muted);
-  letter-spacing: 0.02em;
 }
 
 .segmented {
   display: inline-flex;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 9px;
-  padding: 2px;
+  border-radius: var(--radius-sm);
+  padding: 3px;
   gap: 2px;
 }
 
 .segmented button {
   font: inherit;
-  font-size: 13px;
+  font-family: var(--font-body);
+  font-size: 14px;
   border: 0;
   background: transparent;
   color: var(--text-secondary);
-  padding: 5px 12px;
-  border-radius: 7px;
+  padding: 5px 14px;
+  border-radius: 4px;
   cursor: pointer;
+  transition: background var(--ease), color var(--ease);
 }
 
 .segmented button:hover {
-  color: var(--text-primary);
+  color: var(--ink);
 }
 
 .segmented button[aria-pressed='true'] {
-  background: var(--teal-700);
-  color: #fff;
-  font-weight: 600;
+  background: var(--deep-moss);
+  color: var(--on-moss);
+  font-weight: 700;
 }
 
 /* --- charts ------------------------------------------------------------- */
 
-/* Sized to include the x-axis band, so the axis labels are never cropped into
-   a nested scrollbar. */
+/* The plate. A hairline separates the caption block above from the figure
+   itself, the way a journal separates a figure from its legend. Sized to
+   include the x-axis band, so axis labels are never cropped into a nested
+   scrollbar. */
 .chart-frame {
-  margin-top: 14px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
   width: 100%;
-  height: 260px;
+  height: 276px;
 }
 
 .chart-frame-sm {
-  height: 200px;
+  height: 210px;
 }
 
 /* Refetch keeps the frame: hold the previous render, dimmed, instead of a
@@ -437,7 +558,7 @@ a {
 
 .legend {
   display: flex;
-  gap: 18px;
+  gap: 22px;
   flex-wrap: wrap;
   margin-top: 2px;
 }
@@ -445,45 +566,44 @@ a {
 .legend-item {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   font-size: 13px;
   color: var(--text-secondary);
 }
 
 .legend-key {
-  width: 16px;
+  width: 18px;
   height: 0;
   border-top-width: 2px;
   border-top-style: solid;
-  border-radius: 2px;
   flex: none;
 }
 
 .tooltip {
   background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
-  padding: 10px 12px;
-  min-width: 172px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lift);
+  padding: 11px 13px;
+  min-width: 176px;
 }
 
 .tooltip-date {
-  font-size: 12px;
+  font-size: 10px;
   color: var(--text-muted);
-  margin-bottom: 7px;
+  margin-bottom: 8px;
 }
 
 .tooltip-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
+  gap: 9px;
+  font-size: 14px;
   padding-block: 2px;
 }
 
 .tooltip-key {
-  width: 12px;
+  width: 13px;
   height: 0;
   border-top-width: 2px;
   border-top-style: solid;
@@ -493,14 +613,15 @@ a {
 /* Values lead, labels follow — the reader already knows the series. */
 .tooltip-value {
   font-family: var(--font-mono);
-  font-weight: 600;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
-  color: var(--text-primary);
+  color: var(--ink);
 }
 
 .tooltip-name {
   color: var(--text-muted);
   margin-left: auto;
+  font-size: 13px;
 }
 
 /* --- verification panel ------------------------------------------------- */
@@ -508,18 +629,18 @@ a {
 .verdict {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 18px;
   flex-wrap: wrap;
 }
 
 .gauge {
-  margin-top: 18px;
+  margin-top: 24px;
 }
 
 .gauge-track {
   position: relative;
-  height: 8px;
-  border-radius: 999px;
+  height: 6px;
+  border-radius: 2px;
   background: var(--grid);
   overflow: visible;
 }
@@ -528,69 +649,76 @@ a {
   position: absolute;
   inset-block: 0;
   left: 0;
-  border-radius: 999px;
+  border-radius: 2px;
 }
 
 .gauge-limit {
   position: absolute;
-  top: -5px;
-  bottom: -5px;
+  top: -6px;
+  bottom: -6px;
   width: 2px;
-  background: var(--text-secondary);
-  border-radius: 2px;
+  background: var(--deep-moss);
 }
 
 .gauge-scale {
   display: flex;
   justify-content: space-between;
-  margin-top: 8px;
-  font-size: 12px;
+  margin-top: 12px;
+  font-size: 10px;
   color: var(--text-muted);
 }
 
 .explanation {
-  margin: 16px 0 0;
-  font-size: 14px;
-  line-height: 1.55;
+  margin: 22px 0 0;
+  font-size: 16px;
+  line-height: 1.6;
   color: var(--text-secondary);
+  max-width: 78ch;
 }
 
 .rule-tag {
   display: inline-block;
   font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-muted);
-  background: var(--canvas);
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 2px 7px;
+  font-size: 10px;
+  color: var(--moss);
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  padding: 4px 9px;
 }
 
 /* --- table view --------------------------------------------------------- */
 
 .table-toggle {
   font: inherit;
-  font-size: 13px;
-  color: var(--teal-700);
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--deep-moss);
   background: none;
   border: 0;
-  padding: 0;
+  border-bottom: 1px solid var(--line-strong);
+  padding: 0 0 2px;
   cursor: pointer;
-  font-weight: 600;
+  white-space: nowrap;
+  transition: border-color var(--ease);
+}
+
+.table-toggle:hover {
+  border-bottom-color: var(--deep-moss);
 }
 
 .table-scroll {
-  margin-top: 14px;
+  margin-top: 18px;
   max-height: 300px;
   overflow: auto;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 thead th {
@@ -598,10 +726,10 @@ thead th {
   top: 0;
   background: var(--surface);
   text-align: right;
-  font-weight: 600;
-  color: var(--text-secondary);
-  padding: 9px 12px;
-  border-bottom: 1px solid var(--line);
+  font-size: 10px;
+  color: var(--text-muted);
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--line-strong);
   white-space: nowrap;
 }
 
@@ -611,16 +739,17 @@ tbody td:first-child {
 }
 
 tbody td {
-  padding: 8px 12px;
+  padding: 9px 14px;
   text-align: right;
   border-bottom: 1px solid var(--grid);
   font-variant-numeric: tabular-nums;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 14px;
 }
 
 tbody td:first-child {
   font-family: var(--font-body);
+  color: var(--text-secondary);
 }
 
 tbody tr:last-child td {
@@ -633,22 +762,48 @@ tbody tr:last-child td {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 20px;
+  gap: 24px;
   flex-wrap: wrap;
+}
+
+/* The featured panel on the report screen: the figure the document exists to
+   certify. */
+.report-page .stack > section:first-of-type {
+  background: var(--moss-gradient);
+  border-color: var(--deep-moss);
+  padding: 34px 34px 36px;
+}
+
+.report-page .stack > section:first-of-type .tile-label,
+.report-page .stack > section:first-of-type .tile-foot,
+.report-page .stack > section:first-of-type .tile-unit {
+  color: rgba(248, 247, 239, 0.74);
+}
+
+.report-page .stack > section:first-of-type .hero-value {
+  color: var(--on-moss);
+}
+
+.report-page .stack > section:first-of-type .notice {
+  background: rgba(37, 43, 38, 0.2);
+  border-color: rgba(248, 247, 239, 0.3);
+  border-left-color: rgba(248, 247, 239, 0.55);
+  color: rgba(248, 247, 239, 0.92);
 }
 
 .meta-list {
   display: grid;
-  gap: 10px;
+  gap: 12px;
   margin: 0;
 }
 
 .meta-row {
   display: flex;
   justify-content: space-between;
-  gap: 16px;
-  font-size: 14px;
-  padding-bottom: 10px;
+  align-items: baseline;
+  gap: 20px;
+  font-size: 15px;
+  padding-bottom: 12px;
   border-bottom: 1px solid var(--grid);
 }
 
@@ -658,45 +813,51 @@ tbody tr:last-child td {
 }
 
 .meta-key {
+  font-size: 10.5px;
   color: var(--text-muted);
+  flex: none;
 }
 
 .meta-value {
-  font-weight: 500;
+  font-weight: 400;
   text-align: right;
+  color: var(--ink);
 }
 
 .notice {
-  margin-top: 18px;
-  padding: 12px 14px;
-  border-radius: 10px;
-  background: var(--canvas);
+  margin-top: 20px;
+  padding: 16px 18px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-gradient);
   border: 1px solid var(--line);
-  font-size: 13px;
+  border-left: 2px solid var(--light-moss);
+  font-size: 14.5px;
   color: var(--text-secondary);
-  line-height: 1.55;
+  line-height: 1.6;
 }
 
 /* --- states ------------------------------------------------------------- */
 
 .state {
-  padding: 40px 20px;
+  padding: 56px 20px;
   text-align: center;
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: 16px;
+  font-style: italic;
 }
 
 .state-error {
-  color: var(--status-review-fg);
-  background: var(--status-review-bg);
-  border: 1px solid #fde68a;
+  color: var(--status-error-fg);
+  background: var(--surface);
+  border: 1px solid var(--status-error-fg);
   border-radius: var(--radius);
+  font-style: normal;
 }
 
 .skeleton {
   height: 260px;
-  border-radius: 10px;
-  background: linear-gradient(90deg, var(--grid), #f8fafc, var(--grid));
+  border-radius: var(--radius);
+  background: linear-gradient(90deg, var(--grid), var(--surface), var(--grid));
   background-size: 200% 100%;
   animation: shimmer 1.4s ease-in-out infinite;
 }
@@ -713,6 +874,16 @@ tbody tr:last-child td {
 @media (prefers-reduced-motion: reduce) {
   .skeleton {
     animation: none;
+  }
+
+  .site-card,
+  .print-button {
+    transition: none;
+  }
+
+  .site-card:hover,
+  .print-button:hover {
+    transform: none;
   }
 }
 
@@ -731,15 +902,42 @@ tbody tr:last-child td {
 @media (max-width: 620px) {
   .app-header-inner,
   .page {
-    padding-inline: 16px;
+    padding-inline: 18px;
   }
 
-  .page-title {
-    font-size: 22px;
+  .page {
+    padding-block: 26px 56px;
+  }
+
+  .card-pad,
+  .site-card {
+    padding: 20px 20px 22px;
+  }
+
+  .page-title,
+  .page:has(.grid-sites) .page-head .page-title {
+    font-size: 27px;
+  }
+
+  .page:has(.grid-sites) .page-head {
+    padding: 26px 22px 28px;
+  }
+
+  .report-page .stack > section:first-of-type {
+    padding: 24px 22px 26px;
   }
 
   .hero-value {
-    font-size: 34px;
+    font-size: 44px;
+  }
+
+  .card-title,
+  .site-name {
+    font-size: 19px;
+  }
+
+  .brand-sub {
+    font-size: 12px;
   }
 }
 
@@ -749,31 +947,33 @@ tbody tr:last-child td {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 20px;
+  gap: 24px;
   flex-wrap: wrap;
 }
 
 .print-button {
   flex-shrink: 0;
-  margin-top: 6px;
-  padding: 10px 16px;
-  border-radius: 8px;
-  border: 1px solid var(--teal-700);
-  background: var(--teal-700);
-  color: #ffffff;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 600;
+  margin-top: 10px;
+  padding: 11px 20px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--deep-moss);
+  background: var(--deep-moss);
+  color: var(--on-moss);
+  font-family: var(--font-body);
+  font-size: 11px;
   cursor: pointer;
+  transition: background var(--ease), transform var(--ease), box-shadow var(--ease);
 }
 
 .print-button:hover {
-  background: var(--teal-600);
-  border-color: var(--teal-600);
+  background: var(--moss);
+  border-color: var(--moss);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lift);
 }
 
 .print-button:focus-visible {
-  outline: 2px solid var(--teal-700);
+  outline: 2px solid var(--moss);
   outline-offset: 2px;
 }
 
@@ -788,7 +988,9 @@ tbody tr:last-child td {
  * The exported PDF is the deliverable, not a screenshot of the app, so the app
  * chrome comes off and the document identifies itself. Everything here is
  * deliberately conservative: a print stylesheet that tries to be clever is the
- * one that drops a figure across a page break on stage.
+ * one that drops a figure across a page break on stage. Paper is also the one
+ * place where pure black on pure white is right — bone and moss are a screen
+ * palette, and printers routinely drop backgrounds.
  */
 @media print {
   @page {
@@ -801,10 +1003,12 @@ tbody tr:last-child td {
   :root {
     --canvas: #ffffff;
     --surface: #ffffff;
+    --ink: #000000;
     --text-primary: #000000;
     --text-secondary: #1f2937;
     --text-muted: #4b5563;
     --line: #9ca3af;
+    --line-strong: #6b7280;
     --grid: #d1d5db;
   }
 
@@ -836,6 +1040,29 @@ tbody tr:last-child td {
     margin: 0;
   }
 
+  /* The featured panels are screen furniture. On paper a moss block either
+     prints as mud or is dropped by the printer — taking its bone-coloured text
+     with it — so the gradient comes off and the type goes back to ink. */
+  .report-page .stack > section:first-of-type,
+  .grid-tiles > .card:first-child,
+  .page:has(.grid-sites) .page-head {
+    background: #ffffff !important;
+    border-color: var(--line);
+    padding: 14px 16px;
+  }
+
+  .report-page .stack > section:first-of-type .hero-value,
+  .report-page .stack > section:first-of-type .tile-label,
+  .report-page .stack > section:first-of-type .tile-foot,
+  .report-page .stack > section:first-of-type .tile-unit,
+  .report-page .stack > section:first-of-type .notice,
+  .grid-tiles > .card:first-child .tile-value,
+  .grid-tiles > .card:first-child .tile-label,
+  .grid-tiles > .card:first-child .tile-foot,
+  .grid-tiles > .card:first-child .tile-unit {
+    color: #000000 !important;
+  }
+
   .print-masthead {
     display: flex;
     justify-content: space-between;
@@ -845,7 +1072,7 @@ tbody tr:last-child td {
     margin-bottom: 18px;
     border-bottom: 1.5px solid var(--text-primary);
     font-size: 10pt;
-    font-weight: 600;
+    font-weight: 700;
   }
 
   .print-foot {
@@ -877,8 +1104,12 @@ tbody tr:last-child td {
     font-size: 19pt;
   }
 
+  .card-title {
+    font-size: 13pt;
+  }
+
   .hero-value {
-    font-size: 26pt;
+    font-size: 30pt;
   }
 
   /* Badges are background-filled on screen, and printers routinely drop
@@ -895,6 +1126,13 @@ tbody tr:last-child td {
   .explanation {
     break-inside: avoid;
     page-break-inside: avoid;
+  }
+
+  .notice {
+    background: #ffffff !important;
+    border-color: var(--line) !important;
+    border-left-color: var(--line) !important;
+    color: var(--text-secondary) !important;
   }
 
   a[href^='#'] {
