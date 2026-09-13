@@ -3,6 +3,11 @@
 # error that points nowhere useful. The whole team is on Windows, so pin the
 # files the build actually executes.
 * text=auto
+# Office files are zip containers. `text=auto` detects that today, but say
+# it outright -- a single normalised byte corrupts the archive and the failure
+# is "PowerPoint can't open it", which points nowhere near line endings.
+*.pptx binary
+*.docx binary
 Dockerfile text eol=lf
 *.sh text eol=lf
 *.yaml text eol=lf
