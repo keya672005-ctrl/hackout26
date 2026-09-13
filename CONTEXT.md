@@ -12,6 +12,7 @@ We picked this over 5 other candidate problem statements from the HackOut'26 bri
 
 - **`prd.md`** — full PRD: problem statement, proposed solution, approach, key features, tech stack, and the **7-phase build plan, each phase with its own verification checklist that must pass before the next phase starts**. This is the main reference — follow it phase by phase.
 - **`architecture.md`** — lightweight architecture: repo folder structure + the fixed **API contract** (exact request/response JSON) between backend and frontend. Deliberately NOT a full function-call-graph — that goes stale immediately; decide internal function structure while coding.
+- **`VIDEO_SCRIPT.md`** — the 7-minute walkthrough script for the submitted video: nine timed sections, what to show beside what to say, and every figure it quotes pinned in a table at the bottom so a number can be checked without stopping the recording.
 - **`BioFix_Proposal.docx`** — the 2-page Word write-up for hackathon submission paperwork (Problem Statement / Proposed Solution / Approach / Key Features / Tech Stack, plain Times New Roman format, no branding baked in).
 
 ## Key technical decisions already made (don't relitigate these)
