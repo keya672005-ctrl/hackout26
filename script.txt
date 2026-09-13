@@ -1,0 +1,406 @@
+===============================================================================
+BioFix - VIDEO WALKTHROUGH SCRIPT - 7:00
+HackOut'26 . Team Pixel Error . Adani University
+===============================================================================
+
+Ten sections, timed to 7:00.
+SHOW = what to have on screen.  SAY = read this aloud, it is written as speech.
+
+Word counts assume ~160 words per minute. If a take runs long, the sections
+with slack are 3 (the data) and 6 (the walkthrough) - both are description
+rather than argument. Do not cut 4, 5 or 7; those are the ones that answer
+"how do you know that".
+
+    SECTION                                 FROM    TO    LENGTH
+    1  The problem                          0:00   0:35     35s
+    2  What it does                         0:35   1:15     40s
+    3  The data, and where it came from     1:15   2:05     50s
+    4  The formula                          2:05   2:50     45s
+    5  The method - RULE-001                2:50   3:35     45s
+    6  The walkthrough                      3:35   4:55     80s
+    7  The report, and its fingerprint      4:55   5:40     45s
+    8  How it is built                      5:40   6:20     40s
+    9  What is real, what we left out       6:20   6:45     25s
+    10 Close                                6:45   7:00     15s
+
+
+===============================================================================
+1. THE PROBLEM                                        0:00 - 0:35   (~92 words)
+===============================================================================
+
+SHOW: Open on the BioFix overview, six blocks visible. Do not click anything
+      yet - let the screen sit still while you set up the problem.
+
+SAY:
+
+    Algae ponds fix carbon dioxide faster per hectare than forest, and carbon
+    credits are issued against that. But the number that sets the price comes
+    from sensors in the operator's own ponds, read by the operator's own
+    software, and handed to a verifier as a spreadsheet.
+
+    The seller owns the instrument, owns the number, and owns the incentive.
+    A pond that simply underperformed and a pond that was over-reported
+    produce exactly the same document - and the verifier holding it has no
+    second source to tell them apart.
+
+    This is BioFix.
+
+
+===============================================================================
+2. WHAT IT DOES                                       0:35 - 1:15  (~105 words)
+===============================================================================
+
+SHOW: Any site detail screen, both trend lines visible. Point at the solid
+      line, then the dashed line, as you name them.
+
+SAY:
+
+    BioFix is a verification layer. It takes the operator's sensor record,
+    converts it to carbon dioxide fixed, and then checks that against
+    something the operator does not control: free Sentinel-2 satellite
+    imagery of the same pond, over the same days.
+
+    Two records that share no input, compared by one stated rule. Where they
+    agree, the figure is publishable. Where they come apart, the block is
+    flagged for review.
+
+    Flagged, not accused. The platform never claims fraud - it says this
+    claim is not supported by the imagery, and a human should look before it
+    becomes a credit.
+
+
+===============================================================================
+3. THE DATA, AND WHERE IT CAME FROM                   1:15 - 2:05  (~135 words)
+===============================================================================
+
+SHOW: Overview, then the Scope dropdown -> Earthrise, then Cyanotech.
+      Cut to satellite imagery of a facility if you have it.
+      backend/data/sites.csv is a good cutaway for the real coordinates.
+
+SAY:
+
+    The sites are real. Earthrise Nutritionals at Calipatria in California's
+    Imperial Valley, growing Spirulina platensis. And Cyanotech, at Keahole
+    Point on Hawaii, growing Haematococcus pluvialis. Both are operating
+    commercial raceway farms, and we hold their real coordinates.
+
+    We monitor six raceway blocks, not two farms - because a farm does not
+    fail verification, a pond does. And the blocks were found in the imagery,
+    not drawn by hand: we took the median chlorophyll index per pixel across
+    the window, kept only pixels holding chlorophyll on every date, and
+    clustered those into blocks. The rectangles land on the raceway channels
+    you can see in the scene.
+
+    A third candidate farm was cut for exactly this reason - we could not
+    separate its ponds from surrounding cropland. A chlorophyll index cannot
+    tell a raceway from an alfalfa field.
+
+
+===============================================================================
+4. THE FORMULA                                        2:05 - 2:50  (~125 words)
+===============================================================================
+
+SHOW: Cut to backend/engine/constants.py - the derivation is written in the
+      file. Highlight the two constants and the multiplication.
+
+SAY:
+
+    So where does the carbon number come from? Dry microalgal biomass is
+    about fifty percent carbon by mass. Oxidising that carbon back to carbon
+    dioxide multiplies it by the molecular weight ratio of CO2 to carbon -
+    forty-four point oh-one over twelve point oh-one-one, which is three
+    point six six four.
+
+    Half of that is one point eight three two one kilograms of CO2 per
+    kilogram of dry biomass. That is the whole conversion, and it is a
+    published reference value from microalgae biofixation work - not a number
+    we fitted to make the demo work.
+
+    Biomass comes from growth per hour across the pond volume, at a working
+    depth of twenty-five centimetres, the industry norm for an open raceway.
+    And we count gross production only, and never back-fill a missing hour.
+    If the sensor did not report, that hour contributes nothing. Missing data
+    stays missing.
+
+
+===============================================================================
+5. THE METHOD - RULE-001                              2:50 - 3:35  (~125 words)
+===============================================================================
+
+SHOW: backend/verification/rules.py - all four thresholds are visible at once.
+      Then back to a site detail screen, on the verification panel.
+
+SAY:
+
+    You cannot compare the two signals directly - one is kilograms, the other
+    a dimensionless band index. So both are normalised to one hundred at the
+    start of the window and compared as trends, not as absolute values.
+
+    That comparison is RULE-001: a fourteen-day rolling window, a fifteen
+    percent tolerance, and a block must breach on two consecutive days before
+    it is flagged - one noisy day is not an accusation.
+
+    Two more guards. A day with less than half a day of sensor coverage is
+    dropped rather than back-filled. And any acquisition more than thirty-five
+    percent cloudy is discarded, because a cloud index is not a chlorophyll
+    index.
+
+    The thresholds are configuration, not code. A verifier can point at the
+    rule that fired.
+
+
+===============================================================================
+6. THE WALKTHROUGH                                    3:35 - 4:55  (~215 words)
+===============================================================================
+
+        >>> The longest beat, and the one judges watch. SLOW DOWN HERE. <<<
+
+SHOW: Overview. Scope -> region, then facility.
+      Tick Watch on two blocks -> My watchlist. Show the totals strip.
+      Back to All blocks. Open Earthrise Block A, scroll to the gauge.
+      Then open Cyanotech Block A and let the diverging lines sit on screen.
+
+SAY:
+
+    Here is the dashboard. Six blocks, and I can scope them by region or by
+    operator.
+
+    An operator does not run six ponds - they run the ones they are
+    responsible for. So I can tick those, and the dashboard totals exactly
+    those: carbon dioxide fixed, and how much of it the imagery actually
+    supports.
+
+    [ BEAT - open Earthrise Block A ]
+
+    This is a verified block. The solid line is sensor-reported biomass; the
+    dashed line is the satellite chlorophyll index. Both indexed to one
+    hundred, and they move together. Peak divergence twelve point six percent
+    against a fifteen percent tolerance, currently one point four. No
+    sustained disagreement, so the figure is publishable.
+
+    [ BEAT - open Cyanotech Block A ]
+
+    And this is what the other answer looks like. The same two lines, coming
+    apart. Reported biomass ran up to nineteen percent above the satellite
+    proxy, and stayed outside tolerance for twenty-one consecutive days of the
+    twenty-eight compared. Needs review.
+
+    And I want to be straight about why. Cyanotech's blocks have six
+    cloud-free acquisitions in this window against Earthrise's nine. Thinner
+    evidence is itself a reason a verifier should look - which is precisely
+    what the platform is saying.
+
+
+===============================================================================
+7. THE REPORT, AND ITS FINGERPRINT                    4:55 - 5:40  (~120 words)
+===============================================================================
+
+SHOW: From Earthrise Block A, open its report. Point at the report id, then
+      the figure, then the agreement number. Click Print / Save as PDF and
+      let the dialog appear.
+
+SAY:
+
+    This is the artifact a verifier actually receives. Forty-five thousand,
+    six hundred and twenty-four kilograms of CO2 fixed over a forty-two day
+    reporting period, eighty-seven point four percent agreement with the
+    imagery, verdict verified, under RULE-001.
+
+    And the report id is not a serial number. It is a SHA-256 over what the
+    report asserts - the site, the period, the figure, the verdict, the rule.
+
+    Two things follow. Re-run this on the same data and it mints the same id,
+    so a screenshot from yesterday still matches the running system. And move
+    the published figure by one hundredth of a kilogram and the id changes
+    completely.
+
+    The timestamp is deliberately excluded from that hash. Otherwise the same
+    data would mint a new identity on every refresh, and the id would prove
+    nothing.
+
+
+===============================================================================
+8. HOW IT IS BUILT                                    5:40 - 6:20  (~110 words)
+===============================================================================
+
+SHOW: Split view of the repo, or the terminal running `npm run demo`.
+      A quick scroll through backend/ then frontend/ works well here.
+
+SAY:
+
+    Briefly, how it is built. The backend is Python three-twelve on FastAPI,
+    with pandas and NumPy doing the growth model and the reconciliation, and
+    Pydantic holding the API contract. The front end is React nineteen on
+    Vite, with Recharts for the charts - and no component library, because
+    the whole interface runs off one set of design tokens that gives us a
+    dark theme, a projector-safe light theme, and a print stylesheet for the
+    report.
+
+    There is no database server. The data is CSV, read with pandas, which
+    means the whole thing is reproducible from the repo.
+
+    And it ships as a single Docker image: Node builds the dashboard, Python
+    serves both it and the API from one origin. That is what is running on
+    Render right now, and the same command runs it offline on this laptop.
+
+
+===============================================================================
+9. WHAT IS REAL, WHAT WE LEFT OUT                     6:20 - 6:45   (~70 words)
+===============================================================================
+
+SHOW: Back to the overview, or hold on the report. Say this one straight to
+      camera if you can - it lands better than a screen.
+
+SAY:
+
+    To be straight with you: the imagery is real, the farms are real, the
+    blocks are real, the constant is published, and every figure on screen is
+    computed in the backend. The sensor stream is simulated - which is the
+    honest shape of this problem, because the sensor side is exactly the side
+    nobody should have to take on trust.
+
+    And we report carbon as fixed, not as permanently sequestered. What
+    happens to harvested biomass is outside what this platform can see, so we
+    do not claim it.
+
+
+===============================================================================
+10. CLOSE                                             6:45 - 7:00   (~45 words)
+===============================================================================
+
+SHOW: Overview, six blocks. Hold still.
+      End card: BioFix, the URL, team name.
+
+SAY:
+
+    Most monitoring tools show you the operator's numbers more beautifully.
+    BioFix checks them against an instrument the operator does not own, under
+    a rule you can point at.
+
+    Six ponds, two real farms. We don't just show sensor numbers - we prove
+    them.
+
+
+===============================================================================
+TECH STACK - the full list, if a judge asks
+===============================================================================
+
+BACKEND
+    Python              3.12.10
+    FastAPI             0.115.6      API framework
+    Uvicorn             0.34.0       ASGI server (also serves the built SPA)
+    Pydantic            2.10.4       request/response contract, typed
+    pandas              2.2.3        data pipeline, rolling-window comparison
+    NumPy               2.2.1        logistic growth model, diurnal modulation
+    httpx               0.28.1       imagery fetch (offline by demo time)
+
+FRONTEND
+    React               19.2.8
+    Vite                8.3.0        build tool + dev server
+    Recharts            3.10.1       the sensor-vs-satellite trend charts
+    oxlint              1.81.0       linting
+    Node                22.16.0
+    (No UI component library, no CSS framework. One token set in index.css
+     gives the dark theme, the light projector fallback, and the print
+     stylesheet the report exports through.)
+
+DATA
+    CSV as the source of truth, read with pandas. SQLite (algae.db) is
+    rebuilt by the Phase 1 gate purely to run the relational integrity
+    checks - nothing at runtime queries it. No database server to deploy.
+
+IMAGERY
+    Sentinel-2, via Copernicus / ArcGIS ImageServer. Free and public.
+    Reduced to NDCI (a chlorophyll band index), precomputed and cached
+    before the demo - no live API call on stage.
+
+DEPLOYMENT
+    Docker, multi-stage: node:22-alpine builds, python:3.12-slim runs.
+    One service, one origin - FastAPI serves the API and the built dashboard.
+    Render, free plan. Health check on /health.
+    Offline fallback: `npm run demo` runs the same shape with no internet.
+
+TESTING
+    A verification gate per phase, 551 automated checks in total. Phases 4-6
+    drive a real headless Chrome over the Chrome DevTools Protocol and
+    compare every figure on screen against the API response behind it; the
+    report is exported through Chrome's real print pipeline and checked as
+    PDF bytes.
+        Phase 1  38    data + constants
+        Phase 2  47    CO2 engine
+        Phase 3  34    reconciliation
+        Phase 4  120   dashboard, scope filter, watchlist
+        Phase 5  184   report + fingerprint
+        Phase 6  128   deployment - the same suite can be pointed at the
+                       deployed URL with --target
+
+
+===============================================================================
+EVERY NUMBER IN THIS SCRIPT
+===============================================================================
+
+THE CONVERSION
+    Carbon fraction of dry biomass ........ 0.50
+    CO2 / C molecular weight .............. 44.01 / 12.011 = 3.664
+    kg CO2 per kg dry biomass ............. 1.8321
+    Raceway working depth ................. 0.25 m
+
+RULE-001
+    Tolerance ............................. +/- 15%
+    Rolling window ........................ 14 days
+    Consecutive breaches to flag .......... 2
+    Minimum daily sensor coverage ......... 0.5
+    Max cloud fraction .................... 0.35  (max observed 0.006)
+
+THE DATASET
+    Raceway blocks ........................ 6
+    Hourly sensor readings ................ 6,048
+    Imagery index rows .................... 45
+    Cloud-free dates, Earthrise ........... 9
+    Cloud-free dates, Cyanotech ........... 6
+    Pond area, six blocks ................. 252,000 m2
+
+THE SIX BLOCKS
+    BLOCK         OPERATOR / PLACE            SPECIES                   AREA      CO2 FIXED   VERDICT
+    Earthrise A   Earthrise, Calipatria CA    Spirulina platensis       58,000 m2  45,624 kg  Verified
+    Earthrise B   Earthrise, Calipatria CA    Spirulina platensis       49,000 m2  38,593 kg  Verified
+    Earthrise C   Earthrise, Calipatria CA    Spirulina platensis       48,000 m2  38,037 kg  Verified
+    Cyanotech A   Cyanotech, Keahole Pt HI    Haematococcus pluvialis   44,000 m2  15,770 kg  Needs review
+    Cyanotech B   Cyanotech, Keahole Pt HI    Haematococcus pluvialis   35,000 m2  10,825 kg  Needs review
+    Cyanotech C   Cyanotech, Keahole Pt HI    Haematococcus pluvialis   18,000 m2   5,489 kg  Needs review
+
+PORTFOLIO
+    Reported across six blocks ............ 154.3 t CO2
+    Supported by imagery .................. 122.3 t
+    Held for review ....................... 32.1 t
+
+THE REPORT SHOWN
+    Report id ............................. BF-2026-83D755
+    CO2 fixed ............................. 45,624 kg
+    Reporting period ...................... 42 days (2026-08-01 to 09-11)
+    Agreement with imagery ................ 87.4%
+    Compared days ......................... 28
+
+
+===============================================================================
+BEFORE YOU HIT RECORD
+===============================================================================
+
+1.  Wake the service. The free Render instance sleeps after ~15 minutes and
+    cold-starts in 30-60 seconds. Open the link a couple of minutes early -
+    or record against `npm run demo`, which needs no internet at all and is
+    the same single-origin shape.
+
+2.  Clear the watchlist. It persists per browser, so a rehearsal leaves
+    blocks ticked and section 6 stops being a demonstration of picking them.
+
+3.  Reporting window on 6 weeks. Every figure in this script assumes it.
+
+4.  Pick the theme for your capture. Dark reads better on video; the button
+    is top right, and the choice survives a reload.
+
+5.  Check the report id still reads BF-2026-83D755. If it does not, the data
+    changed and the figures in this script need re-checking before you
+    record.
+
+===============================================================================
