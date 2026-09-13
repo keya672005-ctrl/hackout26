@@ -44,19 +44,24 @@ cloud dependency" is a feature of the architecture, so say that instead.
 5. Glance at the room. If the projector is washing out the darks, switch to the
    light theme now with the button at the top right — not mid-demo. The choice
    is remembered, so it survives the tab switch to the fallback.
+6. **Start with an empty watchlist.** It is remembered per browser, so a
+   rehearsal leaves blocks ticked. Switch to **My watchlist**, hit **Clear**,
+   then back to **All blocks**. Beat 4 is the act of picking; it does not land
+   if the blocks are already picked.
 
 ---
 
-## The run — six beats
+## The run — seven beats
 
 | # | Do | Say |
 |---|---|---|
 | 1 | Overview screen | Six raceway blocks across two real facilities — Earthrise in California, Cyanotech in Hawaii. Each one is measured separately, because a facility does not fail verification, a pond does. |
-| 2 | **Facility** dropdown → Earthrise | All three Earthrise blocks reconcile against the satellite record. |
-| 3 | Dropdown → Cyanotech | All three Cyanotech blocks are flagged. The platform is not asserting fraud — it is saying these claims are not supported by the imagery, and should not be published as credits until someone looks. |
-| 4 | Back to **All facilities**, open a verified block | Sensor-reported biomass against an independent Sentinel-2 chlorophyll index, both indexed to 100. They move together. |
-| 5 | Verification panel | Peak divergence against a 15% tolerance. RULE-001 found no sustained disagreement, so the figure is publishable. |
-| 6 | Open a flagged block → then a verified block's **report** → Print / Save as PDF | Same two lines, coming apart. And this is the artifact a verifier receives for one that passed — the report id is a fingerprint of the figures in it: change any published number and the id changes. |
+| 2 | **Scope** dropdown → Earthrise Nutritionals | All three Earthrise blocks reconcile against the satellite record. The same control scopes by region, for an operator who thinks in geography rather than in company names. |
+| 3 | Scope → Cyanotech Corporation | All three Cyanotech blocks are flagged. The platform is not asserting fraud — it is saying these claims are not supported by the imagery, and should not be published as credits until someone looks. |
+| 4 | Back to **All blocks**. Tick **Watch** on two blocks → **My watchlist** | An operator does not run six ponds, they run the ones they are responsible for. Pick those and the dashboard totals exactly them — CO₂ fixed, and how much of it the imagery actually supports. |
+| 5 | **All blocks** again, open a verified block | Sensor-reported biomass against an independent Sentinel-2 chlorophyll index, both indexed to 100. They move together. |
+| 6 | Verification panel | Peak divergence against a 15% tolerance. RULE-001 found no sustained disagreement, so the figure is publishable. |
+| 7 | Open a flagged block → then a verified block's **report** → Print / Save as PDF | Same two lines, coming apart. And this is the artifact a verifier receives for one that passed — the report id is a fingerprint of the figures in it: change any published number and the id changes. |
 
 **Closing line:** *We don't just show sensor numbers — we prove them.*
 
@@ -70,6 +75,8 @@ cloud dependency" is a feature of the architecture, so say that instead.
 | Local page is blank | `Ctrl+C`, then `npm run demo` again — it rebuilds on start. |
 | "port is busy" in the output | Nothing to do, it takes the next port and prints the URL it actually used. |
 | A chart is empty | Check the reporting window filter is on **6 weeks**. |
+| The grid is empty | You are in **My watchlist** with nothing ticked. Hit **All blocks** — it is the left button of the *Showing* pair, not the *Reporting window* one. |
+| A judge asks whose watchlist it is | Straight answer: this browser's. There is no auth in this build, so there is no account to hang it on, and the screen says so rather than implying one. |
 | Print dialog won't open | The report page still shows every figure on screen — read them off it. |
 | The projector washes the screen out | Hit the ☀/☽ button at the top right. It switches to the light theme, which is high-contrast ink on white and survives a bad projector. One click, no reload. |
 | Laptop dies entirely | The deployed link works from any phone, including on mobile data. |

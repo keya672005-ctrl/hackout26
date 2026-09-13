@@ -6,7 +6,7 @@
  * has to fit in the limit is a *person talking* while clicking. A headless
  * browser cannot do the talking half.
  *
- * What it does measure is the floor: the six beats of DEMO.md, driven in order
+ * What it does measure is the floor: the seven beats of DEMO.md, driven in order
  * against a real deployment, with the wall-clock cost of every click, filter,
  * navigation and the PDF export. That number is the part of the budget the
  * software spends. Whatever is left is what the narration actually has.
@@ -32,7 +32,10 @@ const api = async (path) => JSON.parse(await (await fetch(`${base}${path}`)).tex
 const secs = (ms) => `${(ms / 1000).toFixed(1)}s`
 
 const OVERVIEW_READY = `() => document.querySelectorAll('.site-card').length > 0`
-const pickFacility = (value) => `() => {
+// Scope values are `all` | `region:<region>` | `operator:<operator>` — see
+// src/lib/scope.js. The bare operator name stopped being a valid value when
+// the facility selector grew a second axis.
+const pickScope = (value) => `() => {
   const sel = document.querySelector('.select')
   const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set
   setter.call(sel, ${JSON.stringify(value)})
@@ -67,7 +70,7 @@ async function main() {
   const allRuns = []
 
   for (let run = 1; run <= runs; run++) {
-    heading(`${run}. Run-through ${run} of ${runs} — the six beats of DEMO.md`)
+    heading(`${run}. Run-through ${run} of ${runs} — the seven beats of DEMO.md`)
     const beats = []
     const time = async (label, fn) => {
       const t0 = Date.now()
@@ -89,8 +92,8 @@ async function main() {
 
     for (const operator of operators) {
       const expect = sites.filter((s) => s.operator === operator)
-      await time(`filter to ${operator}`, async () => {
-        await page.evaluate(pickFacility(operator))
+      await time(`scope to ${operator}`, async () => {
+        await page.evaluate(pickScope(`operator:${operator}`))
         await page.waitFor(
           `() => document.querySelectorAll('.site-card').length === ${expect.length}`,
           10_000, `filtered to ${operator}`)
@@ -104,9 +107,41 @@ async function main() {
       })
     }
 
-    await time('back to all facilities, open a verified block', async () => {
-      await page.evaluate(pickFacility('all'))
+    await time('watchlist — tick two blocks, show the totals', async () => {
+      await page.evaluate(pickScope('all'))
       await page.waitFor(`() => document.querySelectorAll('.site-card').length === 6`, 10_000, 'cleared')
+      for (const id of [verified.site_id, flagged.site_id]) {
+        await page.evaluate(`() => {
+          document.querySelector('.watch-check[data-site=' + ${JSON.stringify(JSON.stringify(id))} + ']').click()
+          return true
+        }`)
+      }
+      await page.evaluate(`() => {
+        document.querySelector('.segmented button[data-mode="watchlist"]').click()
+        return true
+      }`)
+      await page.waitFor(`() => document.querySelectorAll('.site-card').length === 2`,
+        10_000, 'watchlist view')
+      const totals = await page.evaluate(`() => {
+        const read = (k) => document.querySelector('[data-watch="' + k + '"]')?.textContent ?? ''
+        return read('count') + ' blocks · ' + read('co2') + ' kg · '
+             + read('verified') + ' verified / ' + read('flagged') + ' flagged'
+      }`)
+      if (!totals.startsWith('2 blocks')) throw new Error(`summary read "${totals}"`)
+
+      // Leave the dashboard as a presenter would for the next beat, and as the
+      // next run expects to find it.
+      await page.evaluate(`() => { document.querySelector('.watch-clear').click(); return true }`)
+      await page.evaluate(`() => {
+        document.querySelector('.segmented button[data-mode="all"]').click()
+        return true
+      }`)
+      await page.waitFor(`() => document.querySelectorAll('.site-card').length === 6`,
+        10_000, 'back to all blocks')
+      return totals
+    })
+
+    await time('open a verified block', async () => {
       await page.evaluate(`() => {
         const card = [...document.querySelectorAll('.site-card')]
           .find((c) => c.getAttribute('href') === '#/site/${verified.site_id}')

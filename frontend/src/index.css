@@ -651,6 +651,115 @@ thead th {
   color: var(--teal-700);
 }
 
+/* --- watchlist ---------------------------------------------------------- */
+
+/* The grid's child is the CELL, not the card. `.site-card` stays an anchor so
+   the gates can click it and read its href; the watch control sits beside it
+   rather than inside it, because a checkbox nested in an anchor fights that
+   anchor for the click. */
+.site-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.site-cell > .site-card {
+  flex: 1;
+}
+
+.watch-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-end;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 2px 0;
+  user-select: none;
+}
+
+.watch-toggle:hover {
+  color: var(--text-secondary);
+}
+
+.watch-check {
+  accent-color: var(--teal-600);
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.site-cell.is-watched .watch-toggle {
+  color: var(--teal-600);
+}
+
+/* Watched blocks read as chosen without restyling the card: the same lit edge
+   the card already uses on hover, held on. */
+.site-cell.is-watched > .site-card {
+  border-color: var(--teal-line);
+}
+
+.watch-summary {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  padding: 16px 22px;
+  margin-bottom: 22px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+}
+
+.watch-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.watch-stat-value {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  line-height: 1.1;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.watch-stat-value.is-verified { color: var(--status-verified-fg); }
+.watch-stat-value.is-review { color: var(--status-review-fg); }
+
+.watch-stat-label {
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.watch-clear {
+  margin-left: auto;
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.watch-clear:hover {
+  color: var(--text-primary);
+  border-color: var(--line-strong);
+}
+
 /* --- filters ------------------------------------------------------------ */
 
 .filter-row {
@@ -1560,6 +1669,11 @@ thead th {
  * screen device, and printers routinely drop backgrounds.
  */
 @media print {
+  .watch-toggle,
+  .watch-clear {
+    display: none !important;
+  }
+
   @page {
     size: A4 portrait;
     margin: 14mm;

@@ -128,60 +128,152 @@ async function main() {
     eq(`card ${i + 1} sparkline plots every trend point`, cards[i]?.sparkPoints, s.trend.length)
     eq(`card ${i + 1} links to its detail screen`, cards[i]?.href, `#/site/${s.site_id}`)
   }
-  // --- 4b. the facility selector ------------------------------------------
-  // Six blocks across two facilities: the control has to actually narrow the
-  // grid, not merely exist. Every assertion below is against what the API said
-  // belongs to that operator, so a filter that dropped or duplicated a block
-  // would fail here rather than look plausible on screen.
+  // --- 4b. the scope selector ----------------------------------------------
+  // Six blocks across two regions and two facilities: the control has to
+  // actually narrow the grid, not merely exist. Every assertion below is
+  // against what the API said belongs to that scope, so a filter that dropped
+  // or duplicated a block would fail here rather than look plausible.
+  //
+  // `regionOf` is mirrored from src/lib/scope.js on purpose -- the gate has to
+  // derive the expected grouping itself rather than ask the page what it
+  // thinks, or it would only be checking the page against itself.
+  const regionOf = (s) => {
+    const parts = String(s.location ?? '').split(',').map((x) => x.trim()).filter(Boolean)
+    return parts.length >= 2 ? parts[parts.length - 2] : (parts[0] ?? 'Unknown')
+  }
   const operators = [...new Set(sites.map((s) => s.operator))]
+  const regions = [...new Set(sites.map(regionOf))]
 
   const options = await page.evaluate(`() => [...document.querySelectorAll('.select option')]
-    .map((o) => ({ value: o.value, label: o.textContent }))`)
-  eq('the facility selector offers every facility plus "all"', options.length, operators.length + 1)
+    .map((o) => ({ value: o.value, label: o.textContent, group: o.parentElement.label ?? '' }))`)
+  eq('the scope selector offers every region and facility plus "all"',
+    options.length, regions.length + operators.length + 1)
   eq('the first option is the unfiltered view', options[0]?.value, 'all')
-  check('every facility from the API is an option',
-    operators.every((o) => options.some((opt) => opt.value === o)),
-    options.map((o) => o.value).join(' | '))
   check('the "all" option states the block count', options[0]?.label.includes(String(sites.length)),
     options[0]?.label)
+  check('every region from the API is an option',
+    regions.every((r) => options.some((o) => o.value === `region:${r}`)),
+    options.map((o) => o.value).join(' | '))
+  check('every facility from the API is an option',
+    operators.every((o) => options.some((opt) => opt.value === `operator:${o}`)),
+    options.map((o) => o.value).join(' | '))
+  check('the two axes are labelled as separate groups',
+    options.some((o) => o.group === 'By region') && options.some((o) => o.group === 'By facility'),
+    [...new Set(options.map((o) => o.group))].join(' | '))
 
-  const namesFor = (operator) => sites.filter((s) => s.operator === operator).map((s) => s.name).sort()
   const shownNames = `() => [...document.querySelectorAll('.site-name')].map((n) => n.textContent).sort()`
+  const pick = (value) => `() => {
+    const sel = document.querySelector('.select')
+    const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set
+    setter.call(sel, ${JSON.stringify(value)})
+    sel.dispatchEvent(new Event('change', { bubbles: true }))
+    return true
+  }`
 
-  for (const operator of operators) {
+  const scopes = [
+    ...regions.map((r) => ({ value: `region:${r}`, label: `region ${r}`,
+      members: sites.filter((s) => regionOf(s) === r) })),
+    ...operators.map((o) => ({ value: `operator:${o}`, label: `facility ${o}`,
+      members: sites.filter((s) => s.operator === o) })),
+  ]
+
+  for (const scope of scopes) {
     // Driven the way a reader drives it: set the value and dispatch the event
     // React listens for, rather than calling the handler directly.
-    await page.evaluate(`() => {
-      const sel = document.querySelector('.select')
-      const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set
-      setter.call(sel, ${JSON.stringify(operator)})
-      sel.dispatchEvent(new Event('change', { bubbles: true }))
-      return true
-    }`)
-    const expected = namesFor(operator)
+    await page.evaluate(pick(scope.value))
+    const expected = scope.members.map((s) => s.name).sort()
     await page.waitFor(
       `() => document.querySelectorAll('.site-card').length === ${expected.length}`,
-      10_000, `filtered to ${operator}`)
+      10_000, `scoped to ${scope.label}`)
     const shown = await page.evaluate(shownNames)
-    check(`selecting "${operator}" shows exactly its blocks`,
+    check(`selecting ${scope.label} shows exactly its blocks`,
       JSON.stringify(shown) === JSON.stringify(expected),
       `${shown.join(', ')}  (want ${expected.join(', ')})`)
   }
 
+  await page.evaluate(pick('all'))
+  await page.waitFor(`() => document.querySelectorAll('.site-card').length === ${sites.length}`,
+    10_000, 'scope cleared')
+  const restored = await page.evaluate(shownNames)
+  check('clearing the scope restores every block',
+    JSON.stringify(restored) === JSON.stringify(sites.map((s) => s.name).sort()),
+    `${restored.length} blocks back`)
+  noProblems('Scope selector')
+
+  // --- 4c. the watchlist ---------------------------------------------------
+  // An operator picking the blocks they are responsible for. The selection is
+  // per-browser (there is no auth in this build), so what matters is that it
+  // filters the grid, that the summary totals exactly the watched blocks, and
+  // that it survives a reload -- a watchlist that forgets itself on refresh is
+  // not a watchlist.
+  const watchA = sites.find((s) => s.status === 'verified')
+  const watchB = sites.find((s) => s.status === 'needs_review')
+  check('there is a verified and a flagged block to watch',
+    Boolean(watchA && watchB), `${watchA?.site_id} / ${watchB?.site_id}`)
+
+  const checkboxes = await page.evaluate(
+    `() => document.querySelectorAll('.watch-check').length`)
+  eq('every block offers a watch control', checkboxes, sites.length)
+
+  const tick = (id) => `() => {
+    document.querySelector('.watch-check[data-site=' + ${JSON.stringify(JSON.stringify(id))} + ']').click()
+    return true
+  }`
+  await page.evaluate(tick(watchA.site_id))
+  await page.evaluate(tick(watchB.site_id))
+  await page.waitFor(
+    `() => document.querySelectorAll('.site-cell.is-watched').length === 2`,
+    10_000, 'two blocks watched')
+
+  const watched = [watchA, watchB]
   await page.evaluate(`() => {
-    const sel = document.querySelector('.select')
-    const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set
-    setter.call(sel, 'all')
-    sel.dispatchEvent(new Event('change', { bubbles: true }))
+    document.querySelector('.segmented button[data-mode="watchlist"]').click()
+    return true
+  }`)
+  await page.waitFor(`() => document.querySelectorAll('.site-card').length === 2`,
+    10_000, 'watchlist view')
+  const watchedNames = await page.evaluate(shownNames)
+  check('the watchlist shows exactly the blocks that were ticked',
+    JSON.stringify(watchedNames) === JSON.stringify(watched.map((s) => s.name).sort()),
+    watchedNames.join(', '))
+
+  const summary = await page.evaluate(`() => {
+    const read = (k) => document.querySelector('[data-watch="' + k + '"]')?.textContent ?? ''
+    return { count: read('count'), co2: read('co2'),
+             verified: read('verified'), flagged: read('flagged') }
+  }`)
+  eq('the summary counts the watched blocks', summary.count, '2')
+  eq('the summary totals their CO2 from the API figures',
+    summary.co2, kg(watched.reduce((sum, s) => sum + s.co2_sequestered_kg, 0)))
+  eq('the summary splits out the verified one', summary.verified, '1')
+  eq('the summary splits out the flagged one', summary.flagged, '1')
+
+  // A reload, not a re-render: persistence is the claim localStorage is making.
+  await page.evaluate(`() => { location.reload(); return true }`)
+  await page.waitFor(`() => document.querySelectorAll('.site-card').length > 0`,
+    20_000, 'overview after reload')
+  const kept = await page.evaluate(
+    `() => document.querySelectorAll('.site-cell.is-watched').length`)
+  eq('the selection survives a reload', kept, 2)
+
+  // Leave the screen as the rest of the gate expects to find it.
+  await page.evaluate(`() => {
+    document.querySelector('.segmented button[data-mode="watchlist"]').click()
+    return true
+  }`)
+  await page.waitFor(`() => document.querySelector('.watch-clear') !== null`, 10_000, 'clear button')
+  await page.evaluate(`() => { document.querySelector('.watch-clear').click(); return true }`)
+  await page.waitFor(`() => document.querySelectorAll('.site-cell.is-watched').length === 0`,
+    10_000, 'watchlist cleared')
+  // By attribute, not by label: the reporting-window control is also a
+  // `.segmented` and also has an "All", and it sits earlier in the DOM.
+  await page.evaluate(`() => {
+    document.querySelector('.segmented button[data-mode="all"]').click()
     return true
   }`)
   await page.waitFor(`() => document.querySelectorAll('.site-card').length === ${sites.length}`,
-    10_000, 'filter cleared')
-  const restored = await page.evaluate(shownNames)
-  check('clearing the filter restores every block',
-    JSON.stringify(restored) === JSON.stringify(sites.map((s) => s.name).sort()),
-    `${restored.length} blocks back`)
-  noProblems('Facility filter')
+    10_000, 'back to all blocks')
+  noProblems('Watchlist')
 
   check('the two sites show different verdicts (the demo contrast is live)',
     new Set(sites.map((s) => s.status)).size === 2,
