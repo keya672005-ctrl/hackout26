@@ -10,6 +10,7 @@
     "dev:web": "npm --prefix frontend run dev",
     "build": "npm --prefix frontend run build",
     "demo": "node scripts/demo.js",
-    "demo:check": "node scripts/demo.js --check"
+    "demo:check": "node scripts/demo.js --check",
+    "demo:time": "node frontend/demo_runthrough.mjs"
   }
 }

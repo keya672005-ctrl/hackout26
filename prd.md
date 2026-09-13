@@ -257,7 +257,7 @@ The interface was restyled for the judging table: other teams had visibly invest
 **Tasks:** finalize slide deck, write and rehearse the demo script.
 **Deliverable:** a rehearsed live demo + deck.
 **Verification checklist:**
-- [ ] Full demo run-through completed at least twice, under the judging time limit.
+- [ ] Full demo run-through completed at least twice, under the judging time limit. *(The automatable half is done and repeatable: `npm run demo:time` drives the six beats of DEMO.md in order against the **deployed** service, twice, asserting each beat landed before recording its time -- **9.8s and 7.4s of click-time against the 180s budget**, spread 2.4s, nothing reported by the browser. So the software spends about 5% of the limit and the remaining ~170s is entirely narration. That is **not** the checklist item, which is a person speaking the beats end to end: the script says so in a check of its own rather than quietly counting click-time as a rehearsal. Rehearse aloud against the per-beat timings and tick this by hand.)*
 - [x] A fallback plan exists if live internet/deployment fails (e.g. local build or recorded backup clip). -- `npm run demo` serves the built SPA and the API from one local port in the same single-origin shape Render runs, and `DEMO.md` is the printed card that drives it.
 
 **What was actually built (Phase 7, fallback):**
