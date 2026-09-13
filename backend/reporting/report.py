@@ -41,9 +41,15 @@ from datetime import datetime, timezone
 from engine import co2
 from verification import reconcile
 
-#: Prefix on every report id. "AC" = algae carbon; the year that follows is the
+#: Prefix on every report id. "BF" = BioFix; the year that follows is the
 #: reporting period's own year, not the year the document was printed.
-ID_PREFIX = "AC"
+#:
+#: The prefix is NOT part of the fingerprint -- `_fingerprint()` hashes the
+#: site, period, figure, verdict and rule only. So renaming the product moved
+#: AC-2026-83D755 to BF-2026-83D755 and left the six hex digits alone, which
+#: is the property worth having: the id still changes if and only if a
+#: published figure changes.
+ID_PREFIX = "BF"
 
 #: Hex digits of the fingerprint kept in the id. Six is short enough to read
 #: aloud in a demo and wide enough (16.7M) that a collision across a handful of

@@ -3,6 +3,10 @@
 # together by hand, so the deploy is reproducible and reviewable in the diff.
 services:
   - type: web
+    # Deliberately NOT renamed to biofix with the rest of the product. This
+    # name is the Render service's identity, and the live service is called
+    # algae-carbon-platform -- which is also where its URL comes from. Change
+    # it here and the blueprint would describe a *different*, second service.
     name: algae-carbon-platform
     runtime: docker
     plan: free

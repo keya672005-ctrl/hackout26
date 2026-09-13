@@ -1,5 +1,5 @@
 """
-Algae-Based Carbon Sequestration Monitoring Platform — API entrypoint.
+BioFix — API entrypoint.
 
 Phase 0 stood this up as a health stub; Phases 2-3 mounted the real contract
 routers (architecture.md §3); Phase 6 made the same process serve the built
@@ -26,7 +26,7 @@ ALLOWED_ORIGINS = [
 ]
 
 app = FastAPI(
-    title="Algae Carbon Sequestration Monitoring Platform",
+    title="BioFix",
     description="Cross-verifies simulated IoT sensor data against Sentinel-2 imagery indices.",
     version="0.1.0",
 )
@@ -50,7 +50,7 @@ def health():
     frontend build is reported as a broken frontend build instead of taking the
     whole service out of rotation.
     """
-    return {"status": "ok", "service": "algae-carbon-api", "version": "0.1.0"}
+    return {"status": "ok", "service": "biofix-api", "version": "0.1.0"}
 
 
 def static_dir() -> Path | None:

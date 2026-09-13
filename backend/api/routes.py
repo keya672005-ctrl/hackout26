@@ -54,7 +54,7 @@ def ping():
     """Placeholder endpoint — proves the API is wired up end to end."""
     return {
         "message": "pong",
-        "service": "algae-carbon-api",
+        "service": "biofix-api",
         "phase": 0,
     }
 

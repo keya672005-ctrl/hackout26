@@ -1,13 +1,13 @@
 # Architecture & API Contract
 
-## Algae-Based Carbon Sequestration Monitoring Platform
+## BioFix — algae-based carbon sequestration monitoring
 
 This is intentionally lightweight — a folder layout and a fixed API contract, not a full call-graph. Internal function structure within each module is fine to decide while coding; this doc only pins down the ONE thing that causes real rework if backend and frontend drift apart independently: the shape of data passed between them.
 
 ## 1. Repo Structure
 
 ```
-algae-carbon-platform/
+biofix/
 ├── backend/
 │   ├── simulator/        # Phase 1 — sensor + imagery data generation
 │   ├── engine/           # Phase 2 — growth/CO2 calculation

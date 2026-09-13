@@ -53,7 +53,7 @@ export default function App() {
               <img src="/favicon.svg" alt="" width="34" height="34" />
             </span>
             <span>
-              <span className="brand-name">Algae Carbon Monitoring</span>
+              <span className="brand-name">BioFix</span>
               <br />
               <span className="brand-sub">Sensor data, cross-verified against satellite</span>
             </span>

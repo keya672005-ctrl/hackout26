@@ -251,7 +251,7 @@ def footer(slide, n):
     para(tf, "%d / 10" % n, size=9.5, color=INK3, font=MONO,
          align=PP_ALIGN.RIGHT, first=True)
     tf2 = tb(slide, 0.9, 7.00, 6.0, 0.3)
-    para(tf2, "Algae Carbon Monitoring  \u00b7  Pixel Error", size=9.5,
+    para(tf2, "BioFix  \u00b7  Pixel Error", size=9.5,
          color=INK3, font=MONO, first=True)
 
 
@@ -259,8 +259,9 @@ def footer(slide, n):
 s = new_slide()
 eyebrow(s, "HackOut\u201926  \u00b7  Circular Carbon Ecosystem", y=1.05)
 tf = tb(s, 0.9, 1.42, 7.2, 2.0)
-para(tf, "Algae Carbon", size=52, color=INK, font=DISPLAY, spacing=1.0, first=True)
-para(tf, "Monitoring", size=52, color=INK, font=DISPLAY, spacing=1.0)
+para(tf, "BioFix", size=66, color=INK, font=DISPLAY, spacing=1.0, first=True)
+para(tf, "Algae-based carbon sequestration monitoring", size=15, color=INK3,
+     spacing=1.2, space_before=12)
 tf = tb(s, 0.9, 3.42, 6.1, 0.9)
 para(tf, "We don\u2019t just show sensor numbers \u2014 we prove them.",
      size=20, color=INK, font=DISPLAY, italic=True, spacing=1.2, first=True)
@@ -535,7 +536,7 @@ heading(s, "A document whose identity is its figures.", w=9.4)
 
 panel(s, 0.9, 2.5, 5.3, 3.2, accent=True)
 tf = tb(s, 1.22, 2.78, 2.6, 0.3)
-para(tf, "AC-2026-83D755", size=12, color=TEAL, font=MONO, first=True)
+para(tf, "BF-2026-83D755", size=12, color=TEAL, font=MONO, first=True)
 badge(s, 4.62, 2.74, "Verified", ok=True)
 tf = tb(s, 1.22, 3.32, 4.6, 0.3)
 para(tf, "CO\u2082 fixed, reporting period", size=10, color=INK3, bold=True,
@@ -689,7 +690,7 @@ para(tf, "algae-carbon-platform.onrender.com", size=13, color=TEAL, font=MONO,
 footer(s, 10)
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir,
-                   "Algae_Carbon_Monitoring_Deck.pptx")
+                   "BioFix_Deck.pptx")
 prs.save(OUT)
 print("saved", os.path.normpath(OUT))
 print("slides:", len(prs.slides._sldIdLst))

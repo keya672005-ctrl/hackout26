@@ -66,7 +66,7 @@ export default function Report({ siteId, range }) {
 
       {/* Printed pages lose the app chrome, so the document names itself. */}
       <div className="print-only print-masthead">
-        <span>Algae Carbon Monitoring — verification report</span>
+        <span>BioFix — verification report</span>
         <span className="mono">{report.report_id}</span>
       </div>
 

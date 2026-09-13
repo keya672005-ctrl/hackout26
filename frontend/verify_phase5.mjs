@@ -135,7 +135,7 @@ async function main() {
   eq('same data re-requested yields the same id', again.report_id, reportA.report_id)
   check('id carries the reporting period year', reportA.report_id.includes('-2026-'),
     reportA.report_id)
-  check('id is the documented shape', /^AC-\d{4}-[0-9A-F]{6}$/.test(reportA.report_id),
+  check('id is the documented shape', /^BF-\d{4}-[0-9A-F]{6}$/.test(reportA.report_id),
     reportA.report_id)
 
   const reportB = await api(`/api/sites/${siteB.site_id}/report?range=6w`)

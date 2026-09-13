@@ -16,7 +16,7 @@ import { useEffect, useState } from 'react'
  * site data) — so every access is guarded and the failure mode is simply that
  * the preference does not survive a reload.
  */
-const KEY = 'acm-theme'
+const KEY = 'biofix-theme'
 
 function currentTheme() {
   return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'
