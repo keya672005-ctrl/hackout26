@@ -517,16 +517,20 @@ para(tf, "Held for review", size=11.5, color=REVIEW, first=True)
 tf = tb(s, 10.4, 4.34, 1.76, 0.3)
 para(tf, "32.1 t", size=11.5, color=INK2, font=MONO, align=PP_ALIGN.RIGHT, first=True)
 
-tf = tb(s, 7.64, 4.78, 4.8, 1.9)
-rich(tf, [("The blocks were ",),
+tf = tb(s, 7.64, 4.70, 4.8, 2.05)
+rich(tf, [("Blocks were ",),
           ("delineated from the imagery", {"bold": True, "color": INK}),
-          (", not drawn by hand: pixels holding chlorophyll across every date "
-           "in the window, clustered inside each validated facility footprint.",)],
-     size=12, spacing=1.32, first=True)
-para(tf, "Cyanotech\u2019s three blocks flag on their own data \u2014 sparser "
-         "cloud-free imagery, six usable dates against Earthrise\u2019s nine. "
-         "That is a property of the evidence, not a claim about the company.",
-     size=10.5, color=INK3, spacing=1.3, space_before=10)
+          (", not drawn by hand \u2014 pixels holding chlorophyll on every date, "
+           "clustered inside each validated footprint.",)],
+     size=12, spacing=1.3, first=True)
+rich(tf, [("An operator scopes by ",),
+          ("region or facility", {"bold": True, "color": INK}),
+          (", ticks the ponds they actually run, and these totals recompute "
+           "for exactly those.",)],
+     size=12, spacing=1.3, space_before=9)
+para(tf, "Cyanotech\u2019s three flag on their own data \u2014 six usable dates "
+         "against Earthrise\u2019s nine. Evidence, not an accusation.",
+     size=10.5, color=INK3, spacing=1.28, space_before=9)
 footer(s, 6)
 
 # =========================================================== 7. report
@@ -658,7 +662,7 @@ para(tf, "Every phase has a gate, and they all pass", size=10.5, color=INK3,
 yy = 3.24
 for label, value, col in (
         ("Data, CO\u2082 engine, reconciliation", "38  \u00b7  47  \u00b7  34", INK2),
-        ("Dashboard, report, deployment", "107  \u00b7  184  \u00b7  128", INK2),
+        ("Dashboard, report, deployment", "120  \u00b7  184  \u00b7  128", INK2),
         ("Against the live service", "125 / 125", VERIFIED)):
     rule(s, 7.26, yy, 4.86)
     t = tb(s, 7.26, yy + 0.10, 3.1, 0.34)
